@@ -2,617 +2,256 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>FFSLC – Listes de départ</title>
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FFSLC – Générateur de listes de départ</title>
 
-<!-- Librairies -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
-<link rel="manifest" id="dynamic-manifest">
+<link id="dynamic-manifest" rel="manifest">
 
 <style>
-:root {
-    --ffs-blue: #005bbb;
-    --ffs-red: #e10600;
-    --bg-light: #f5f5f5;
-    --bg-card: #ffffff;
-    --text-main: #222222;
-    --text-muted: #666666;
-    --border-soft: #dddddd;
-    --accent: #ffcc00;
-}
-
-@media (prefers-color-scheme: dark) {
-    :root {
-        --bg-light: #121212;
-        --bg-card: #1e1e1e;
-        --text-main: #f5f5f5;
-        --text-muted: #bbbbbb;
-        --border-soft: #333333;
-    }
-    body {
-        color-scheme: dark;
-    }
-}
-
-* {
-    box-sizing: border-box;
-}
-
+/* --- STYLE GLOBAL --- */
 body {
+    font-family: Arial, sans-serif;
     margin: 0;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    background: var(--bg-light);
-    color: var(--text-main);
-}
-
-.header-bar {
-    background: linear-gradient(135deg, var(--ffs-blue), var(--ffs-red));
-    color: #ffffff;
-    padding: 12px 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-}
-
-.header-title {
-    font-size: 1.2rem;
-    font-weight: 600;
-}
-
-.header-sub {
-    font-size: 0.85rem;
-    opacity: 0.9;
-}
-
-.header-actions {
-    display: flex;
-    gap: 8px;
-    margin-top: 6px;
-}
-
-.badge {
-    padding: 3px 8px;
-    border-radius: 999px;
-    border: 1px solid rgba(255,255,255,0.7);
-    font-size: 0.75rem;
-}
-
-.container {
-    max-width: 1200px;
-    margin: 16px auto 32px;
-    padding: 0 10px;
-}
-
-.grid {
-    display: grid;
-    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
-    gap: 16px;
-}
-@media (max-width: 900px) {
-    .grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-.card {
-    background: var(--bg-card);
-    border-radius: 10px;
-    padding: 14px 14px 12px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-    border: 1px solid var(--border-soft);
-}
-
-.card h3 {
-    margin: 0 0 8px;
-    font-size: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.card h3 span.icon {
-    font-size: 1.1rem;
-}
-
-.card small {
-    color: var(--text-muted);
-    font-size: 0.8rem;
-}
-
-label {
-    display: block;
-    font-size: 0.85rem;
-    margin-top: 8px;
-    margin-bottom: 2px;
-}
-
-input[type="file"],
-input[type="time"],
-input[type="number"],
-select {
-    width: 100%;
-    padding: 6px 8px;
-    border-radius: 6px;
-    border: 1px solid var(--border-soft);
-    font-size: 0.9rem;
-    background: var(--bg-card);
-    color: var(--text-main);
-}
-
-input[type="file"] {
-    padding: 4px;
-}
-
-input:focus,
-select:focus {
-    outline: 2px solid var(--ffs-blue);
-    outline-offset: 1px;
-}
-
-button {
-    border: none;
-    border-radius: 999px;
-    padding: 7px 14px;
-    font-size: 0.9rem;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    white-space: nowrap;
-}
-
-.btn-primary {
-    background: var(--ffs-blue);
-    color: #ffffff;
-}
-.btn-primary:hover {
-    background: #004499;
-}
-.btn-danger {
-    background: var(--ffs-red);
-    color: #ffffff;
-}
-.btn-danger:hover {
-    background: #b00500;
-}
-.btn-ghost {
-    background: transparent;
-    color: var(--text-main);
-    border: 1px solid var(--border-soft);
-}
-.btn-ghost:hover {
-    background: rgba(0,0,0,0.04);
-}
-.btn-accent {
-    background: var(--accent);
+    padding: 0;
+    background: #f5f5f5;
     color: #222;
 }
-.btn-accent:hover {
-    background: #f0b800;
+header {
+    background: linear-gradient(90deg, #005bbb, #ff0000);
+    color: white;
+    padding: 20px;
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
 }
-
-button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
+.container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: auto;
 }
-
-.btn-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 10px;
+.card {
+    background: white;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
-
-.table-wrapper {
-    margin-top: 16px;
-    background: var(--bg-card);
-    border-radius: 10px;
-    border: 1px solid var(--border-soft);
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-    overflow: hidden;
+button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-right: 10px;
 }
-
-.table-toolbar {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    padding: 8px 10px;
-    border-bottom: 1px solid var(--border-soft);
-    align-items: center;
-    background: rgba(0,0,0,0.02);
+button.primary { background: #005bbb; color: white; }
+button.danger { background: #cc0000; color: white; }
+button.success { background: #008000; color: white; }
+input, select {
+    padding: 10px;
+    font-size: 16px;
+    margin: 5px 0;
+    width: 100%;
 }
-
-.table-toolbar-left,
-.table-toolbar-right {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    align-items: center;
-}
-
-.table-toolbar-left {
-    flex: 1;
-}
-
-.search-input {
-    padding: 6px 8px;
-    border-radius: 999px;
-    border: 1px solid var(--border-soft);
-    font-size: 0.85rem;
-    min-width: 180px;
-    background: var(--bg-card);
-    color: var(--text-main);
-}
-
-select.filter {
-    padding: 5px 8px;
-    border-radius: 999px;
-    font-size: 0.8rem;
-    border: 1px solid var(--border-soft);
-    background: var(--bg-card);
-    color: var(--text-main);
-}
-
-.table-container {
-    max-height: 60vh;
-    overflow: auto;
-}
-
 table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.85rem;
+    margin-top: 15px;
 }
-
-thead {
-    position: sticky;
-    top: 0;
-    z-index: 2;
-}
-
 th, td {
-    padding: 6px 8px;
-    border-bottom: 1px solid var(--border-soft);
-    text-align: left;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
 }
-
 th {
-    background: var(--ffs-blue);
-    color: #ffffff;
-    font-weight: 500;
-    position: sticky;
-    top: 0;
-}
-
-th.sortable {
     cursor: pointer;
-}
-
-th.sortable span.sort-indicator {
-    font-size: 0.7rem;
-    opacity: 0.8;
-    margin-left: 4px;
-}
-
-tbody tr:nth-child(even) {
-    background: rgba(0,0,0,0.02);
-}
-
-tbody tr:hover {
-    background: rgba(0,0,0,0.06);
-}
-
-.badge-discipline {
-    display: inline-block;
-    padding: 2px 6px;
-    border-radius: 999px;
-    font-size: 0.7rem;
-    font-weight: 500;
-    color: #ffffff;
-}
-.badge-canicross { background: var(--ffs-red); }
-.badge-canivtt { background: #008f4c; }
-.badge-canipedicycle { background: #ff9800; }
-
-.footer {
-    text-align: center;
-    margin-top: 18px;
-    font-size: 0.8rem;
-    color: var(--text-muted);
-}
-
-.footer strong {
-    color: var(--text-main);
-}
-
-.chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 2px 8px;
-    border-radius: 999px;
-    border: 1px solid var(--border-soft);
-    font-size: 0.75rem;
-    color: var(--text-muted);
-}
-
-@media print {
-    .header-bar,
-    .card,
-    .table-toolbar,
-    .footer {
-        display: none !important;
-    }
-    body {
-        background: #ffffff;
-    }
-    .table-wrapper {
-        box-shadow: none;
-        border: none;
-    }
-    th {
-        position: static;
-    }
+    background: #eee;
 }
 </style>
 </head>
+
 <body>
-<div class="header-bar">
-    <div>
-        <div class="header-title">FFSLC – Générateur de listes de départ</div>
-        <div class="header-sub">Fusion inscrits + résultats, tri par moyenne, export et impression</div>
-        <div class="header-actions">
-            <span class="badge">Mode sombre auto</span>
-            <span class="badge">Installable (PWA)</span>
-        </div>
-    </div>
-    <div class="header-actions">
-        <button class="btn-ghost" id="btnInstallPWA" style="display:none;">
-            📲 Installer l’application
-        </button>
-    </div>
-</div>
+<header>FFSLC – Générateur de listes de départ</header>
 
 <div class="container">
+<div class="card">
+    <h2>📂 Fichiers d’entrée</h2>
+    <p>Charge d’abord les inscrits, puis les résultats.</p>
 
-    <div class="grid">
-        <div class="card">
-            <h3><span class="icon">📂</span> Fichiers d’entrée</h3>
-            <small>Charge d’abord les inscrits, puis les résultats.</small>
+    <label>Fichier des inscrits :</label>
+    <input type="file" id="fichierInscrits" accept=".csv,.xls,.xlsx">
 
-            <label>Fichier des inscrits (FFSLC export) :</label>
-            <input type="file" id="fichierInscrits" accept=".csv,.xls,.xlsx">
+    <label>Fichier des résultats :</label>
+    <input type="file" id="fichierResultats" accept=".csv,.xls,.xlsx">
 
-            <label>Fichier des résultats (classements) :</label>
-            <input type="file" id="fichierResultats" accept=".csv,.xls,.xlsx">
+    <button id="btnFusion" class="primary">🔗 Fusionner inscrits + résultats</button>
+    <button id="btnReset" class="danger">♻️ Réinitialiser</button>
 
-            <div class="btn-row">
-                <button class="btn-primary" id="btnFusion">
-                    🔗 Fusionner inscrits + résultats
-                </button>
-                <button class="btn-ghost" id="btnReset">
-                    ♻️ Réinitialiser
-                </button>
-            </div>
-
-            <div style="margin-top:10px;font-size:0.8rem;color:var(--text-muted);">
-                <div>✔ Normalisation des noms de chiens, licences et disciplines.</div>
-                <div>✔ Tri automatique par moyenne après fusion.</div>
-            </div>
-        </div>
-
-        <div class="card">
-            <h3><span class="icon">⏱️</span> Paramètres des départs</h3>
-            <small>Heures de départ et intervalle entre concurrents.</small>
-
-            <label>Heure de départ – Canicross :</label>
-            <input type="time" id="heureCanicross" value="09:00">
-
-            <label>Heure de départ – Canivtt :</label>
-            <input type="time" id="heureCanivtt" value="10:00">
-
-            <label>Heure de départ – Canipédicycle :</label>
-            <input type="time" id="heureCanipedicycle" value="11:00">
-
-            <label>Intervalle entre départs (secondes) :</label>
-            <input type="number" id="intervalle" value="30" min="1">
-
-            <div class="btn-row">
-                <button class="btn-accent" id="btnGenererListes">
-                    📝 Générer les listes de départ (CSV)
-                </button>
-                <button class="btn-ghost" id="btnImprimer">
-                    🖨️ Imprimer la liste affichée
-                </button>
-            </div>
-
-            <div style="margin-top:10px;font-size:0.8rem;color:var(--text-muted);">
-                <div>✔ Export séparé par discipline (Canicross, Canivtt, Canipédicycle).</div>
-                <div>✔ Heures visibles dans le tableau avant impression.</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="table-wrapper">
-        <div class="table-toolbar">
-            <div class="table-toolbar-left">
-                <input type="text" id="searchInput" class="search-input" placeholder="🔍 Rechercher (nom, chien, club, licence)…">
-                <select id="filterDiscipline" class="filter">
-                    <option value="">Toutes disciplines</option>
-                    <option value="canicross">Canicross</option>
-                    <option value="canivtt">Canivtt</option>
-                    <option value="canipedicycle">Canipédicycle</option>
-                </select>
-                <select id="filterCategorie" class="filter">
-                    <option value="">Toutes catégories</option>
-                </select>
-            </div>
-            <div class="table-toolbar-right">
-                <span class="chip" id="chipStats">0 inscrits fusionnés</span>
-            </div>
-        </div>
-        <div class="table-container">
-            <table id="tableResultat">
-                <thead>
-                    <tr>
-                        <th class="sortable" data-sort="licence">Licence <span class="sort-indicator">⇅</span></th>
-                        <th class="sortable" data-sort="nom">Nom <span class="sort-indicator">⇅</span></th>
-                        <th class="sortable" data-sort="prenom">Prénom <span class="sort-indicator">⇅</span></th>
-                        <th class="sortable" data-sort="categorie">Catégorie <span class="sort-indicator">⇅</span></th>
-                        <th class="sortable" data-sort="club">Club <span class="sort-indicator">⇅</span></th>
-                        <th class="sortable" data-sort="nom_du_chien">Nom du chien <span class="sort-indicator">⇅</span></th>
-                        <th>Race</th>
-                        <th>Puce</th>
-                        <th class="sortable" data-sort="moyenne">Moyenne <span class="sort-indicator">⇅</span></th>
-                        <th class="sortable" data-sort="nombreCourses">Courses <span class="sort-indicator">⇅</span></th>
-                        <th class="sortable" data-sort="discipline">Discipline <span class="sort-indicator">⇅</span></th>
-                        <th class="sortable" data-sort="heure_depart">Heure départ <span class="sort-indicator">⇅</span></th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
-    </div>
-
-    <div class="footer">
-        FFSLC – Outil listes de départ • Conception <strong>Robert AURAY</strong>
-    </div>
-
-</div>
-<div class="header-bar">
-    <div>
-        <div class="header-title">FFSLC – Générateur de listes de départ</div>
-        <div class="header-sub">Fusion inscrits + résultats, tri par moyenne, export et impression</div>
-        <div class="header-actions">
-            <span class="badge">Mode sombre auto</span>
-            <span class="badge">Installable (PWA)</span>
-        </div>
-    </div>
-    <div class="header-actions">
-        <button class="btn-ghost" id="btnInstallPWA" style="display:none;">
-            📲 Installer l’application
-        </button>
-    </div>
+    <p>✔ Normalisation des noms, licences et disciplines.</p>
+    <p>✔ Tri automatique par moyenne après fusion.</p>
 </div>
 
-<div class="container">
+<div class="card">
+    <h2>⏱️ Paramètres des départs</h2>
 
-    <div class="grid">
-        <div class="card">
-            <h3><span class="icon">📂</span> Fichiers d’entrée</h3>
-            <small>Charge d’abord les inscrits, puis les résultats.</small>
+    <label>Heure de départ – Canicross :</label>
+    <input type="time" id="heureCanicross" value="09:00">
 
-            <label>Fichier des inscrits (FFSLC export) :</label>
-            <input type="file" id="fichierInscrits" accept=".csv,.xls,.xlsx">
+    <label>Heure de départ – Canivtt :</label>
+    <input type="time" id="heureCanivtt" value="10:00">
 
-            <label>Fichier des résultats (classements) :</label>
-            <input type="file" id="fichierResultats" accept=".csv,.xls,.xlsx">
+    <label>Heure de départ – Canipédicycle :</label>
+    <input type="time" id="heureCanipedicycle" value="11:00">
 
-            <div class="btn-row">
-                <button class="btn-primary" id="btnFusion">
-                    🔗 Fusionner inscrits + résultats
-                </button>
-                <button class="btn-ghost" id="btnReset">
-                    ♻️ Réinitialiser
-                </button>
-            </div>
+    <label>Intervalle entre départs (secondes) :</label>
+    <input type="number" id="intervalle" value="30">
 
-            <div style="margin-top:10px;font-size:0.8rem;color:var(--text-muted);">
-                <div>✔ Normalisation des noms de chiens, licences et disciplines.</div>
-                <div>✔ Tri automatique par moyenne après fusion.</div>
-            </div>
-        </div>
+    <button id="btnGenererListes" class="success">📝 Générer les listes de départ (CSV)</button>
+    <button id="btnImprimer" class="primary">🖨️ Imprimer la liste affichée</button>
 
-        <div class="card">
-            <h3><span class="icon">⏱️</span> Paramètres des départs</h3>
-            <small>Heures de départ et intervalle entre concurrents.</small>
-
-            <label>Heure de départ – Canicross :</label>
-            <input type="time" id="heureCanicross" value="09:00">
-
-            <label>Heure de départ – Canivtt :</label>
-            <input type="time" id="heureCanivtt" value="10:00">
-
-            <label>Heure de départ – Canipédicycle :</label>
-            <input type="time" id="heureCanipedicycle" value="11:00">
-
-            <label>Intervalle entre départs (secondes) :</label>
-            <input type="number" id="intervalle" value="30" min="1">
-
-            <div class="btn-row">
-                <button class="btn-accent" id="btnGenererListes">
-                    📝 Générer les listes de départ (CSV)
-                </button>
-                <button class="btn-ghost" id="btnImprimer">
-                    🖨️ Imprimer la liste affichée
-                </button>
-            </div>
-
-            <div style="margin-top:10px;font-size:0.8rem;color:var(--text-muted);">
-                <div>✔ Export séparé par discipline (Canicross, Canivtt, Canipédicycle).</div>
-                <div>✔ Heures visibles dans le tableau avant impression.</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="table-wrapper">
-        <div class="table-toolbar">
-            <div class="table-toolbar-left">
-                <input type="text" id="searchInput" class="search-input" placeholder="🔍 Rechercher (nom, chien, club, licence)…">
-                <select id="filterDiscipline" class="filter">
-                    <option value="">Toutes disciplines</option>
-                    <option value="canicross">Canicross</option>
-                    <option value="canivtt">Canivtt</option>
-                    <option value="canipedicycle">Canipédicycle</option>
-                </select>
-                <select id="filterCategorie" class="filter">
-                    <option value="">Toutes catégories</option>
-                </select>
-            </div>
-            <div class="table-toolbar-right">
-                <span class="chip" id="chipStats">0 inscrits fusionnés</span>
-            </div>
-        </div>
-        <div class="table-container">
-            <table id="tableResultat">
-                <thead>
-                    <tr>
-                        <th class="sortable" data-sort="licence">Licence <span class="sort-indicator">⇅</span></th>
-                        <th class="sortable" data-sort="nom">Nom <span class="sort-indicator">⇅</span></th>
-                        <th class="sortable" data-sort="prenom">Prénom <span class="sort-indicator">⇅</span></th>
-                        <th class="sortable" data-sort="categorie">Catégorie <span class="sort-indicator">⇅</span></th>
-                        <th class="sortable" data-sort="club">Club <span class="sort-indicator">⇅</span></th>
-                        <th class="sortable" data-sort="nom_du_chien">Nom du chien <span class="sort-indicator">⇅</span></th>
-                        <th>Race</th>
-                        <th>Puce</th>
-                        <th class="sortable" data-sort="moyenne">Moyenne <span class="sort-indicator">⇅</span></th>
-                        <th class="sortable" data-sort="nombreCourses">Courses <span class="sort-indicator">⇅</span></th>
-                        <th class="sortable" data-sort="discipline">Discipline <span class="sort-indicator">⇅</span></th>
-                        <th class="sortable" data-sort="heure_depart">Heure départ <span class="sort-indicator">⇅</span></th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
-    </div>
-
-    <div class="footer">
-        FFSLC – Outil listes de départ • Conception <strong>Robert AURAY</strong>
-    </div>
-
+    <p>✔ Export séparé par discipline.</p>
+    <p>✔ Heures visibles dans le tableau avant impression.</p>
 </div>
+
+<div class="card">
+    <h2>🔍 Recherche et filtres</h2>
+
+    <input type="text" id="searchInput" placeholder="Rechercher (nom, chien, club, licence)…">
+
+    <select id="filtreDiscipline">
+        <option value="">Toutes disciplines</option>
+        <option value="canicross">Canicross</option>
+        <option value="canivtt">Canivtt</option>
+        <option value="canipedicycle">Canipédicycle</option>
+    </select>
+
+    <select id="filtreCategorie">
+        <option value="">Toutes catégories</option>
+    </select>
+
+    <p id="chipStats">0 inscrits fusionnés</p>
+
+    <table id="tableResultat">
+        <thead>
+            <tr>
+                <th data-col="licence">Licence ⇅</th>
+                <th data-col="nom">Nom ⇅</th>
+                <th data-col="prenom">Prénom ⇅</th>
+                <th data-col="categorie">Catégorie ⇅</th>
+                <th data-col="club">Club ⇅</th>
+                <th data-col="chien">Nom du chien ⇅</th>
+                <th data-col="race">Race</th>
+                <th data-col="puce">Puce</th>
+                <th data-col="moyenne">Moyenne ⇅</th>
+                <th data-col="courses">Courses ⇅</th>
+                <th data-col="discipline">Discipline ⇅</th>
+                <th data-col="heure_depart">Heure départ ⇅</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
 <script>
-// ----------- EXPORT CSV -----------
+let inscrits = [];
+let resultats = [];
+let resultatsGlobaux = [];
+let filteredView = [];
+let triColonne = null;
+let triAsc = true;
+
+function lireFichier(input, callback) {
+    const fichier = input.files[0];
+    if (!fichier) return;
+
+    const ext = fichier.name.split(".").pop().toLowerCase();
+
+    if (ext === "csv") {
+        Papa.parse(fichier, {
+            header: true,
+            skipEmptyLines: true,
+            complete: res => callback(res.data)
+        });
+    } else {
+        const reader = new FileReader();
+        reader.onload = e => {
+            const wb = XLSX.read(e.target.result, { type: "binary" });
+            const ws = wb.Sheets[wb.SheetNames[0]];
+            callback(XLSX.utils.sheet_to_json(ws));
+        };
+        reader.readAsBinaryString(fichier);
+    }
+}
+
+document.getElementById("fichierInscrits").addEventListener("change", () => {
+    lireFichier(document.getElementById("fichierInscrits"), data => {
+        inscrits = data;
+        alert("Inscrits chargés : " + inscrits.length);
+    });
+});
+
+document.getElementById("fichierResultats").addEventListener("change", () => {
+    lireFichier(document.getElementById("fichierResultats"), data => {
+        resultats = data;
+        alert("Résultats chargés : " + resultats.length);
+    });
+});
+
+document.getElementById("btnFusion").addEventListener("click", () => {
+    if (inscrits.length === 0 || resultats.length === 0) {
+        alert("Veuillez charger les deux fichiers.");
+        return;
+    }
+
+    resultatsGlobaux = inscrits.map(i => {
+        const r = resultats.find(x => x.licence == i.licence);
+        return {
+            ...i,
+            moyenne: r ? r.moyenne : "",
+            courses: r ? r.courses : "",
+            discipline: i.discipline?.toLowerCase() || ""
+        };
+    });
+
+    filteredView = [...resultatsGlobaux];
+    afficherTableau();
+    alert("Fusion terminée !");
+});
+
+function afficherTableau() {
+    const tbody = document.querySelector("#tableResultat tbody");
+    tbody.innerHTML = "";
+
+    filteredView.forEach(l => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${l.licence || ""}</td>
+            <td>${l.nom || ""}</td>
+            <td>${l.prenom || ""}</td>
+            <td>${l.categorie || ""}</td>
+            <td>${l.club || ""}</td>
+            <td>${l.chien || ""}</td>
+            <td>${l.race || ""}</td>
+            <td>${l.puce || ""}</td>
+            <td>${l.moyenne || ""}</td>
+            <td>${l.courses || ""}</td>
+            <td>${l.discipline || ""}</td>
+            <td>${l.heure_depart || ""}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+
+    document.getElementById("chipStats").textContent =
+        filteredView.length + " inscrits fusionnés";
+}
+</script>
+<script>
 function exporterCSV(data, nomFichier) {
     if (!data || data.length === 0) return;
     const csv = Papa.unparse(data);
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
-
     const a = document.createElement("a");
     a.href = url;
     a.download = nomFichier;
@@ -620,7 +259,6 @@ function exporterCSV(data, nomFichier) {
     URL.revokeObjectURL(url);
 }
 
-// ----------- HEURES DE DÉPART -----------
 function genererHeuresDepart(liste, heureDepart, intervalleSec) {
     if (!heureDepart) return liste;
     let [h, m] = heureDepart.split(":").map(Number);
@@ -629,56 +267,45 @@ function genererHeuresDepart(liste, heureDepart, intervalleSec) {
 
     return liste.map((item, index) => {
         let depart = new Date(base.getTime() + index * intervalleSec * 1000);
-        let hh = depart.getHours().toString().padStart(2, "0");
-        let mm = depart.getMinutes().toString().padStart(2, "0");
-        let ss = depart.getSeconds().toString().padStart(2, "0");
-
-        return {
-            ...item,
-            heure_depart: `${hh}:${mm}:${ss}`
-        };
+        let hh = String(depart.getHours()).padStart(2, "0");
+        let mm = String(depart.getMinutes()).padStart(2, "0");
+        let ss = String(depart.getSeconds()).padStart(2, "0");
+        return { ...item, heure_depart: `${hh}:${mm}:${ss}` };
     });
 }
 
-// ----------- BOUTON GÉNÉRER LISTES -----------
 document.getElementById("btnGenererListes").addEventListener("click", () => {
-    if (resultatsGlobaux.length === 0) {
-        alert("Veuillez d’abord fusionner les inscrits avec les résultats.");
-        return;
-    }
+    const h1 = document.getElementById("heureCanicross").value;
+    const h2 = document.getElementById("heureCanivtt").value;
+    const h3 = document.getElementById("heureCanipedicycle").value;
+    const intervalle = Number(document.getElementById("intervalle").value);
 
-    const hCaniCross = document.getElementById("heureCanicross").value;
-    const hCaniVTT = document.getElementById("heureCanivtt").value;
-    const hCaniPedi = document.getElementById("heureCanipedicycle").value;
-    const intervalle = Number(document.getElementById("intervalle").value || 30);
+    const c1 = genererHeuresDepart(
+        resultatsGlobaux.filter(r => r.discipline === "canicross"),
+        h1, intervalle
+    );
+    const c2 = genererHeuresDepart(
+        resultatsGlobaux.filter(r => r.discipline === "canivtt"),
+        h2, intervalle
+    );
+    const c3 = genererHeuresDepart(
+        resultatsGlobaux.filter(r => r.discipline === "canipedicycle"),
+        h3, intervalle
+    );
 
-    const canicross = resultatsGlobaux.filter(r => r.discipline === "canicross");
-    const canivtt = resultatsGlobaux.filter(r => r.discipline === "canivtt");
-    const canipedicycle = resultatsGlobaux.filter(r => r.discipline === "canipedicycle");
+    exporterCSV(c1, "depart_canicross.csv");
+    exporterCSV(c2, "depart_canivtt.csv");
+    exporterCSV(c3, "depart_canipedicycle.csv");
 
-    const listeCanicross = genererHeuresDepart(canicross, hCaniCross, intervalle);
-    const listeCanivtt = genererHeuresDepart(canivtt, hCaniVTT, intervalle);
-    const listeCanipedicycle = genererHeuresDepart(canipedicycle, hCaniPedi, intervalle);
-
-    exporterCSV(listeCanicross, "depart_canicross.csv");
-    exporterCSV(listeCanivtt, "depart_canivtt.csv");
-    exporterCSV(listeCanipedicycle, "depart_canipedicycle.csv");
-
-    resultatsGlobaux = [...listeCanicross, ...listeCanivtt, ...listeCanipedicycle];
-    appliquerFiltres();
-    alert("Listes de départ générées et téléchargées.");
+    resultatsGlobaux = [...c1, ...c2, ...c3];
+    filteredView = [...resultatsGlobaux];
+    afficherTableau();
 });
 
-// ----------- BOUTON IMPRIMER -----------
 document.getElementById("btnImprimer").addEventListener("click", () => {
-    if (filteredView.length === 0) {
-        alert("Aucune donnée à imprimer.");
-        return;
-    }
     window.print();
 });
 
-// ----------- BOUTON RESET -----------
 document.getElementById("btnReset").addEventListener("click", () => {
     inscrits = [];
     resultats = [];
@@ -686,71 +313,7 @@ document.getElementById("btnReset").addEventListener("click", () => {
     filteredView = [];
     document.querySelector("#tableResultat tbody").innerHTML = "";
     document.getElementById("chipStats").textContent = "0 inscrits fusionnés";
-    document.getElementById("fichierInscrits").value = "";
-    document.getElementById("fichierResultats").value = "";
     alert("Application réinitialisée.");
-});
-
-// ----------- PWA : MANIFEST + SERVICE WORKER -----------
-function createManifest() {
-    const manifest = {
-        name: "FFSLC – Listes de départ",
-        short_name: "Listes départ",
-        start_url: ".",
-        display: "standalone",
-        background_color: "#005bbb",
-        theme_color: "#005bbb",
-        icons: [
-            {
-                src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23005bbb'/%3E%3Ctext x='50' y='58' font-size='40' text-anchor='middle' fill='white' font-family='sans-serif'%3ELD%3C/text%3E%3C/svg%3E",
-                sizes: "192x192",
-                type: "image/svg+xml"
-            }
-        ]
-    };
-    const blob = new Blob([JSON.stringify(manifest)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    document.getElementById("dynamic-manifest").setAttribute("href", url);
-}
-
-function registerServiceWorker() {
-    if ("serviceWorker" in navigator) {
-        const swCode = `
-            self.addEventListener('install', event => {
-                self.skipWaiting();
-            });
-            self.addEventListener('activate', event => {
-                event.waitUntil(self.clients.claim());
-            });
-            self.addEventListener('fetch', event => {
-                event.respondWith(fetch(event.request));
-            });
-        `;
-        const blob = new Blob([swCode], { type: "text/javascript" });
-        const swUrl = URL.createObjectURL(blob);
-        navigator.serviceWorker.register(swUrl);
-    }
-}
-
-window.addEventListener("beforeinstallprompt", (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    const btn = document.getElementById("btnInstallPWA");
-    btn.style.display = "inline-flex";
-    btn.addEventListener("click", async () => {
-        if (!deferredPrompt) return;
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        if (outcome === "accepted") {
-            deferredPrompt = null;
-            btn.style.display = "none";
-        }
-    });
-});
-
-window.addEventListener("load", () => {
-    createManifest();
-    registerServiceWorker();
 });
 </script>
 
