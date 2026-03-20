@@ -1,9 +1,13 @@
+<!-- ============================
+     PARTIE 1 — HTML + CSS
+=============================== -->
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FFSLC – Générateur de listes de départ</title>
+<title>FFSLC – Générateur de listes de départ (Version 2)</title>
 
 <style>
 body {
@@ -40,6 +44,7 @@ button {
     cursor: pointer;
     font-size: 16px;
     margin-right: 10px;
+    margin-top: 5px;
 }
 button.primary { background: #005bbb; color: white; }
 button.danger { background: #cc0000; color: white; }
@@ -63,35 +68,41 @@ th {
     cursor: pointer;
     background: #eee;
 }
+
+/* Impression PDF */
+@media print {
+    @page { size: A4 portrait; margin: 10mm; }
+    header, button, input, select { display: none !important; }
+    table { font-size: 12px; border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #000; padding: 6px; }
+    th:nth-child(9), td:nth-child(9),
+    th:nth-child(10), td:nth-child(10) { display: none; }
+}
 </style>
 </head>
 
 <body>
-<header>FFSLC – Générateur de listes de départ</header>
+
+<header>FFSLC – Générateur de listes de départ (Version 2)</header>
 
 <div class="container">
+<!-- ============================
+     PARTIE 2 — INTERFACE HTML
+=============================== -->
 
-<!-- ----------------------------------------------------------
-     FICHIERS D’ENTRÉE
------------------------------------------------------------ -->
+<!-- FICHIERS D’ENTRÉE -->
 <div class="card">
     <h2>📂 Fichiers d’entrée</h2>
 
     <label>Fichier des inscrits :</label>
     <input type="file" id="fichierInscrits" accept=".csv,.xls,.xlsx">
 
-    <label>Fichier des résultats :</label>
-    <input type="file" id="fichierResultats" accept=".csv,.xls,.xlsx">
-
-    <button id="btnFusion" class="primary">🔗 Fusionner inscrits + résultats</button>
     <button id="btnReset" class="danger">♻️ Réinitialiser</button>
 </div>
 
-<!-- ----------------------------------------------------------
-     PARAMÈTRES DES DÉPARTS
------------------------------------------------------------ -->
+<!-- PARAMÈTRES GLOBAUX -->
 <div class="card">
-    <h2>⏱️ Paramètres des départs</h2>
+    <h2>⏱️ Paramètres globaux</h2>
 
     <h3>Canicross</h3>
     <label>Heure de départ :</label>
@@ -107,7 +118,7 @@ th {
         <option value="40">Vagues de 40</option>
     </select>
 
-    <label>Intervalle (secondes) pour individuel / groupes :</label>
+    <label>Intervalle (secondes) :</label>
     <input type="number" id="intervalleCanicross" value="30">
 
     <h3>Canitrail</h3>
@@ -124,42 +135,40 @@ th {
         <option value="40">Vagues de 40</option>
     </select>
 
-    <label>Intervalle (secondes) pour individuel / groupes :</label>
+    <label>Intervalle (secondes) :</label>
     <input type="number" id="intervalleCanitrail" value="30">
 
     <h3>Canivtt</h3>
     <label>Heure de départ :</label>
     <input type="time" id="heureCanivtt" value="10:00">
-    <p>Départ individuel toutes les 30 secondes.</p>
 
     <h3>Canipédicycle</h3>
     <label>Heure de départ :</label>
     <input type="time" id="heureCanipedicycle" value="11:00">
-    <p>Départ individuel toutes les 30 secondes.</p>
-
-    <button id="btnGenererListes" class="success">📝 Générer les listes de départ (CSV)</button>
-    <button id="btnImprimer" class="primary">🖨️ Imprimer la liste affichée</button>
 </div>
 
-<!-- ----------------------------------------------------------
-     TABLEAU + RECHERCHE
------------------------------------------------------------ -->
+<!-- PARAMÈTRES DYNAMIQUES -->
 <div class="card">
-    <h2>🔍 Recherche et filtres</h2>
+    <h2>⚙️ Paramètres spécifiques par course</h2>
+    <div id="zoneParametres"></div>
+</div>
 
-    <input type="text" id="searchInput" placeholder="Rechercher (nom, chien, club, licence)…">
+<!-- BOUTONS D’ACTION -->
+<div class="card">
+    <h2>🛠️ Actions</h2>
 
-    <select id="filtreDiscipline">
-        <option value="">Toutes disciplines</option>
-        <option value="canicross">Canicross</option>
-        <option value="canivtt">Canivtt</option>
-        <option value="canipedicycle">Canipédicycle</option>
-        <option value="canitrail">Canitrail</option>
-    </select>
+    <button id="btnGenererListes" class="success">📝 Générer les listes de départ</button>
 
-    <select id="filtreCategorie">
-        <option value="">Toutes catégories</option>
-    </select>
+    <button id="btnExportPDFParDiscipline" class="primary"></button>
+    <button id="btnExportPDFGlobal" class="primary">📄 Export PDF – toutes les listes</button>
+
+    <button id="btnExportExcelMulti" class="primary">📘 Export Excel multi‑onglets</button>
+    <button id="btnExporterTout" class="success">📦 Exporter tout</button>
+</div>
+
+<!-- TABLEAU -->
+<div class="card">
+    
 
     <p id="chipStats">0 inscrits fusionnés</p>
 
@@ -175,7 +184,6 @@ th {
                 <th>Race</th>
                 <th>Puce</th>
                 <th>Moyenne</th>
-                <th>Courses</th>
                 <th>Discipline</th>
                 <th>Heure départ</th>
             </tr>
@@ -183,18 +191,16 @@ th {
         <tbody></tbody>
     </table>
 </div>
-
-<!-- ----------------------------------------------------------
-     SCRIPTS
------------------------------------------------------------ -->
+<!-- ============================
+     PARTIE 3 — LOGIQUE JS
+=============================== -->
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <script>
-
 /* ---------------------------------------------------------
-   NETTOYAGE AUTOMATIQUE DES CLÉS DE COLONNES
+   NETTOYAGE DES CLÉS
 --------------------------------------------------------- */
 function nettoyerCles(obj) {
     const propre = {};
@@ -208,9 +214,8 @@ function nettoyerCles(obj) {
     return propre;
 }
 
-
 /* ---------------------------------------------------------
-   MAPPING TOLÉRANT DES COLONNES
+   MAPPING TOLÉRANT
 --------------------------------------------------------- */
 function getCol(ligne, noms) {
     for (let n of noms) {
@@ -227,17 +232,72 @@ function normaliserDiscipline(d) {
     d = d.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     d = d.replace(/\s+/g, "");
 
-    if (d.includes("trail")) return "canitrail";
-    if (d.includes("cross")) return "canicross";
-    if (d.includes("vtt")) return "canivtt";
-    if (d.includes("pedi") || d.includes("pedicycle") || d.includes("cycle"))
-        return "canipedicycle";
+    const isSamedi = d.includes("samedi") || d.includes("sam");
+    const isDimanche = d.includes("dimanche") || d.includes("dim");
+    const suffix = isSamedi ? "_samedi" : isDimanche ? "_dimanche" : "";
+
+    if (d.includes("canicrosscourt")) return "canicross_court" + suffix;
+    if (d.includes("canicrosslong")) return "canicross_long" + suffix;
+    if (d.includes("canicross")) return "canicross" + suffix;
+
+    if (d.includes("vttcourt")) return "canivtt_court" + suffix;
+    if (d.includes("vttlong")) return "canivtt_long" + suffix;
+    if (d.includes("vtt")) return "canivtt" + suffix;
+
+    if (d.includes("pedicyclecourt")) return "canipedicycle_court" + suffix;
+    if (d.includes("pedicyclelong")) return "canipedicycle_long" + suffix;
+    if (d.includes("pedi") || d.includes("cycle")) return "canipedicycle" + suffix;
+
+    if (d.includes("trail")) return "canitrail" + suffix;
 
     return "";
 }
 
 /* ---------------------------------------------------------
-   LECTURE CSV / XLSX
+   VARIABLES GLOBALES
+--------------------------------------------------------- */
+let inscrits = [];
+let resultats = [];
+let resultatsGlobaux = [];
+let filteredView = [];
+let listesFinales = {};
+window.paramDepart = {};
+
+let inscritsPrets = false;
+let resultatsPrets = false;
+
+/* ---------------------------------------------------------
+   CHARGEMENT AUTOMATIQUE DES RÉSULTATS (GITHUB RAW)
+--------------------------------------------------------- */
+function chargerResultatsAuto() {
+    const url = "https://raw.githubusercontent.com/chiensdor/liste-de-d-part/main/resultats_moyennes.csv";
+
+    fetch(url)
+        .then(res => res.text())
+        .then(csv => {
+            Papa.parse(csv, {
+                header: true,
+                skipEmptyLines: true,
+                complete: data => {
+                    resultats = data.data.map(l => ({
+                        licence: getCol(l, ["Licence", "licence"]),
+                        moyenne: getCol(l, ["moyenne", "Moyenne"]),
+                        courses: getCol(l, ["nombre_courses", "courses"]),
+                        participants: getCol(l, ["participants"]),
+                        discipline: normaliserDiscipline(getCol(l, ["nom de la course", "Course"]))
+                    }));
+
+                    // 🔥 SIGNAL : résultats prêts
+                    resultatsPrets = true;
+                    if (inscritsPrets) fusionner();
+                }
+            });
+        });
+}
+chargerResultatsAuto();
+
+/* ---------------------------------------------------------
+   LECTURE CSV / XLSX (INSCRITS)
 --------------------------------------------------------- */
 function lireFichier(input, callback) {
     const fichier = input.files[0];
@@ -261,81 +321,12 @@ function lireFichier(input, callback) {
         reader.readAsBinaryString(fichier);
     }
 }
-/* ---------------------------------------------------------
-   VARIABLES GLOBALES
---------------------------------------------------------- */
-let inscrits = [];
-let resultats = [];
-let resultatsGlobaux = [];
-let filteredView = [];
 
 /* ---------------------------------------------------------
-   CHARGEMENT DES INSCRITS
+   FONCTION FUSIONNER
 --------------------------------------------------------- */
-document.getElementById("fichierInscrits").addEventListener("change", () => {
-    lireFichier(document.getElementById("fichierInscrits"), data => {
-        inscrits = data.map(l => ({
-            licence: getCol(l, ["Licence", "LICENCE", "N° Licence", "Numero licence"]),
-            nom: getCol(l, ["Nom de famille", "Nom", "NOM", "nom"]),
-            prenom: getCol(l, ["Prénom", "Prenom", "PRENOM", "prenom"]),
-            categorie: getCol(l, ["Catégorie", "Categorie", "CATEGORIE"]),
-            club: getCol(l, ["Club", "CLUB"]),
-            chien: getCol(l, ["#1 Chien - nom", "Nom du chien", "Chien", "chien"]),
-            race: getCol(l, ["#1 Chien - race", "Race", "race"]),
-            puce: getCol(l, ["#1 Chien - puce", "PUCE OU TATOUAGE", "Puce", "puce"]),
-            discipline: normaliserDiscipline(
-                getCol(l, ["Course", "nom de la course", "Discipline"])
-            )
-        }));
-        alert("Inscrits chargés : " + inscrits.length);
-    });
-});
+function fusionner() {
 
-/* ---------------------------------------------------------
-   CHARGEMENT DES RÉSULTATS — COMPATIBLE 2025
---------------------------------------------------------- */
-document.getElementById("fichierResultats").addEventListener("change", () => {
-    lireFichier(document.getElementById("fichierResultats"), data => {
-        resultats = data.map(l => ({
-            licence: getCol(l, ["Licence", "LICENCE"]),
-
-            moyenne: getCol(l, [
-                "Points course",
-                "points",
-                "Points",
-                "points course"
-            ]),
-
-            courses: getCol(l, [
-                "classement dans la course",
-                "Classement",
-                "classement",
-                "classement course"
-            ]),
-
-            participants: getCol(l, [
-                "nombre de participants",
-                "participants",
-                "nb participants"
-            ]),
-
-            discipline: normaliserDiscipline(
-                getCol(l, [
-                    "nom de la course",
-                    "Course",
-                    "course",
-                    "discipline"
-                ])
-            )
-        }));
-        alert("Résultats chargés : " + resultats.length);
-    });
-});
-
-/* ---------------------------------------------------------
-   FUSION INSCRITS + RÉSULTATS
---------------------------------------------------------- */
-document.getElementById("btnFusion").addEventListener("click", () => {
     resultatsGlobaux = inscrits.map(i => {
         const r = resultats.find(x => x.licence == i.licence);
         return {
@@ -349,11 +340,95 @@ document.getElementById("btnFusion").addEventListener("click", () => {
 
     filteredView = [...resultatsGlobaux];
     afficherTableau();
+
+    const disciplinesDetectees = [...new Set(resultatsGlobaux.map(r => r.discipline))];
+
+    // Ajouter les disciplines manquantes
+    const disciplinesManquantes = [
+        "canicross_court_dimanche",
+        "canicross_long_samedi",
+        "canitrail_dimanche"
+    ];
+    disciplinesManquantes.forEach(dm => {
+        if (!disciplinesDetectees.includes(dm)) disciplinesDetectees.push(dm);
+    });
+
+    const zone = document.getElementById("zoneParametres");
+    zone.innerHTML = "";
+    window.paramDepart = {};
+
+    const sansMode = [
+        "canipedicycle_samedi",
+        "canipedicycle_dimanche",
+        "canivtt_samedi",
+        "canivtt_dimanche"
+    ];
+
+    disciplinesDetectees.forEach(d => {
+        const id = d.replace(/[^a-z0-9]/gi, "_");
+
+        let html = `
+            <div class="card" style="background:#f0f7ff; margin-top:15px;">
+                <h3>${d.replaceAll("_", " ").toUpperCase()}</h3>
+
+                <label>Heure de départ :</label>
+                <input type="time" id="heure_${id}" value="09:00">
+        `;
+
+        if (!sansMode.includes(d)) {
+            html += `
+                <label>Type de départ :</label>
+                <select id="mode_${id}">
+                    <option value="1">Individuel</option>
+                    <option value="2">Par 2</option>
+                    <option value="3">Par 3</option>
+                    <option value="4">Par 4</option>
+                    <option value="20">Vagues de 20</option>
+                    <option value="40">Vagues de 40</option>
+                    <option value="30s">Individuel 30s (VTT / Pédicycle)</option>
+                </select>
+            `;
+        }
+
+        html += `</div>`;
+        zone.innerHTML += html;
+
+        paramDepart[d] = { heure: "09:00", mode: sansMode.includes(d) ? "30s" : "1" };
+    });
+
     alert("Fusion terminée !");
+}
+
+/* ---------------------------------------------------------
+   CHARGEMENT INSCRITS + FUSION AUTOMATIQUE
+--------------------------------------------------------- */
+document.getElementById("fichierInscrits").addEventListener("change", () => {
+    lireFichier(document.getElementById("fichierInscrits"), data => {
+
+        // 🔥 SUPPRESSION DE LA PREMIÈRE LIGNE
+        data = data.slice(1);
+
+        inscrits = data.map(l => ({
+            licence: getCol(l, ["Licence", "LICENCE"]),
+            nom: getCol(l, ["Nom", "Nom de famille"]),
+            prenom: getCol(l, ["Prénom", "Prenom"]),
+            categorie: getCol(l, ["Catégorie", "Categorie"]),
+            club: getCol(l, ["Club"]),
+            chien: getCol(l, ["Chien", "#1 Chien - nom"]),
+            race: getCol(l, ["Race", "#1 Chien - race"]),
+            puce: getCol(l, ["Puce", "#1 Chien - puce"]),
+            discipline: normaliserDiscipline(getCol(l, ["Course", "nom de la course"]))
+        }));
+
+        inscritsPrets = true;
+
+        // 🔥 Fusion automatique seulement si résultats déjà chargés
+        if (resultatsPrets) fusionner();
+    });
 });
 
 /* ---------------------------------------------------------
-   AFFICHAGE DU TABLEAU
+   AFFICHAGE TABLEAU
 --------------------------------------------------------- */
 function afficherTableau() {
     const tbody = document.querySelector("#tableResultat tbody");
@@ -371,7 +446,6 @@ function afficherTableau() {
             <td>${l.race}</td>
             <td>${l.puce}</td>
             <td>${l.moyenne}</td>
-            <td>${l.courses}</td>
             <td>${l.discipline}</td>
             <td>${l.heure_depart || ""}</td>
         `;
@@ -381,23 +455,29 @@ function afficherTableau() {
     document.getElementById("chipStats").textContent =
         filteredView.length + " inscrits fusionnés";
 }
+</script>
+<!-- ============================
+     PARTIE 4 — GÉNÉRATION + EXPORTS + PDF + RESET
+=============================== -->
+
+<script>
 /* ---------------------------------------------------------
-   EXPORT CSV
+   TRI PAR MOYENNE
 --------------------------------------------------------- */
-function exporterCSV(data, nomFichier) {
-    if (!data || data.length === 0) return;
-    const csv = Papa.unparse(data);
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = nomFichier;
-    a.click();
-    URL.revokeObjectURL(url);
+function trierParMoyenne(liste) {
+    return liste.sort((a, b) => {
+        const ma = Number(a.moyenne) || 0;
+        const mb = Number(b.moyenne) || 0;
+
+        if (ma === 0 && mb !== 0) return 1;
+        if (mb === 0 && ma !== 0) return -1;
+
+        return ma - mb;
+    });
 }
 
 /* ---------------------------------------------------------
-   CALCUL HEURES — GROUPES (1, 2, 3, 4)
+   CALCUL HEURES — GROUPES
 --------------------------------------------------------- */
 function genererGroupes(liste, heureDepart, tailleGroupe, intervalleSec) {
     let [h, m] = heureDepart.split(":").map(Number);
@@ -417,7 +497,7 @@ function genererGroupes(liste, heureDepart, tailleGroupe, intervalleSec) {
 }
 
 /* ---------------------------------------------------------
-   CALCUL HEURES — VAGUES (20, 40)
+   CALCUL HEURES — VAGUES
 --------------------------------------------------------- */
 function genererVagues(liste, heureDepart, tailleVague) {
     let [h, m] = heureDepart.split(":").map(Number);
@@ -430,14 +510,13 @@ function genererVagues(liste, heureDepart, tailleVague) {
 
         let hh = String(depart.getHours()).padStart(2, "0");
         let mm = String(depart.getMinutes()).padStart(2, "0");
-        let ss = "00";
 
-        return { ...item, heure_depart: `${hh}:${mm}:${ss}` };
+        return { ...item, heure_depart: `${hh}:${mm}:00` };
     });
 }
 
 /* ---------------------------------------------------------
-   CALCUL HEURES — CANIVTT / CANIPEDICYCLE (30s)
+   CALCUL HEURES — INDIVIDUEL 30s
 --------------------------------------------------------- */
 function genererIndividuel30s(liste, heureDepart) {
     let [h, m] = heureDepart.split(":").map(Number);
@@ -471,51 +550,296 @@ document.getElementById("btnGenererListes").addEventListener("click", () => {
     const intervalleCX = Number(document.getElementById("intervalleCanicross").value);
     const intervalleCT = Number(document.getElementById("intervalleCanitrail").value);
 
-    const listeCX = resultatsGlobaux.filter(r => r.discipline === "canicross");
-    const listeCT = resultatsGlobaux.filter(r => r.discipline === "canitrail");
-    const listeVTT = resultatsGlobaux.filter(r => r.discipline === "canivtt");
-    const listePEDI = resultatsGlobaux.filter(r => r.discipline === "canipedicycle");
+    const disciplines = Object.keys(paramDepart);
 
-    let CX = [];
-    let CT = [];
-    let VTT = [];
-    let PEDI = [];
+    listesFinales = {};
 
-    // Canicross
-    if (modeCX === 20 || modeCX === 40) {
-        CX = genererVagues(listeCX, hCX, modeCX);
-    } else {
-        CX = genererGroupes(listeCX, hCX, modeCX, intervalleCX);
-    }
+    disciplines.forEach(d => {
+        const liste = resultatsGlobaux.filter(r => r.discipline === d);
+        trierParMoyenne(liste);
 
-    // Canitrail
-    if (modeCT === 20 || modeCT === 40) {
-        CT = genererVagues(listeCT, hCT, modeCT);
-    } else {
-        CT = genererGroupes(listeCT, hCT, modeCT, intervalleCT);
-    }
+        const heure = paramDepart[d].heure;
+        const mode = paramDepart[d].mode;
 
-    // Canivtt / Canipédicycle
-    VTT = genererIndividuel30s(listeVTT, hVTT);
-    PEDI = genererIndividuel30s(listePEDI, hPEDI);
+        if (mode === "30s") {
+            listesFinales[d] = genererIndividuel30s(liste, heure);
+        } else if (mode == 20 || mode == 40) {
+            listesFinales[d] = genererVagues(liste, heure, Number(mode));
+        } else {
+            const intervalle = d.includes("trail") ? intervalleCT : intervalleCX;
+            listesFinales[d] = genererGroupes(liste, heure, Number(mode), intervalle);
+        }
+    });
 
-    // Export CSV
-    exporterCSV(CX, "depart_canicross.csv");
-    exporterCSV(CT, "depart_canitrail.csv");
-    exporterCSV(VTT, "depart_canivtt.csv");
-    exporterCSV(PEDI, "depart_canipedicycle.csv");
-
-    // Mise à jour du tableau
-    resultatsGlobaux = [...CX, ...CT, ...VTT, ...PEDI];
+    resultatsGlobaux = Object.values(listesFinales).flat();
     filteredView = [...resultatsGlobaux];
     afficherTableau();
+
+    alert("Listes générées !");
 });
 
 /* ---------------------------------------------------------
-   BOUTON IMPRIMER
+   EXPORT CSV
 --------------------------------------------------------- */
-document.getElementById("btnImprimer").addEventListener("click", () => {
-    window.print();
+function exporterCSV(data, nomFichier) {
+    if (!data || data.length === 0) return;
+    const csv = Papa.unparse(data);
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = nomFichier;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+/* ---------------------------------------------------------
+   EXPORT EXCEL SIMPLE
+--------------------------------------------------------- */
+function exporterExcel(data, nomFichier) {
+    if (!data || data.length === 0) return;
+
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Départs");
+
+    XLSX.writeFile(wb, nomFichier);
+}
+
+/* ---------------------------------------------------------
+   EXPORT EXCEL MULTI‑ONGLETS
+--------------------------------------------------------- */
+document.getElementById("btnExportExcelMulti").addEventListener("click", () => {
+    if (!listesFinales || Object.keys(listesFinales).length === 0) {
+        alert("Génère d’abord les listes de départ.");
+        return;
+    }
+
+    const wb = XLSX.utils.book_new();
+
+    for (let nom in listesFinales) {
+        const ws = XLSX.utils.json_to_sheet(listesFinales[nom]);
+        XLSX.utils.book_append_sheet(wb, ws, nom.substring(0, 31));
+    }
+
+    XLSX.writeFile(wb, "depart_multi_onglets.xlsx");
+});
+
+/* ---------------------------------------------------------
+   EXPORTER TOUT (PDF par discipline supprimé)
+--------------------------------------------------------- */
+document.getElementById("btnExporterTout").addEventListener("click", () => {
+    if (!listesFinales || Object.keys(listesFinales).length === 0) {
+        alert("Génère d’abord les listes de départ.");
+        return;
+    }
+
+    for (let d in listesFinales) {
+        exporterCSV(listesFinales[d], `depart_${d}.csv`);
+        exporterExcel(listesFinales[d], `depart_${d}.xlsx`);
+    }
+
+    exporterExcelMultiOnglets(listesFinales, "depart_multi_onglets.xlsx");
+    exporterExcel(resultatsGlobaux, "depart_global.xlsx");
+
+    alert("Tous les fichiers ont été exportés.");
+});
+
+/* ---------------------------------------------------------
+   EXPORT PDF PAR DISCIPLINE (corrigé)
+--------------------------------------------------------- */
+document.getElementById("btnExportPDFParDiscipline").addEventListener("click", () => {
+
+    if (!listesFinales || Object.keys(listesFinales).length === 0) {
+        alert("Génère d’abord les listes de départ.");
+        return;
+    }
+
+    const disciplines = Object.keys(listesFinales);
+    let index = 0;
+
+    function imprimerDiscipline() {
+        if (index >= disciplines.length) {
+            alert("Export PDF terminé.");
+            return;
+        }
+
+        const d = disciplines[index];
+        const data = listesFinales[d];
+
+        const w = window.open("", "_blank");
+
+        let html = `
+            <html>
+            <head>
+                <title>${d}</title>
+                <style>
+                    body { font-family: Arial; padding: 20px; }
+                    h1 { text-align: center; margin-bottom: 20px; }
+                    table { width: 100%; border-collapse: collapse; }
+                    th, td { border: 1px solid #000; padding: 6px; font-size: 12px; }
+                    th:nth-child(9), td:nth-child(9) { display: none; }
+                    th:nth-child(10), td:nth-child(10) { display: none; }
+                </style>
+            </head>
+            <body>
+                <h1>${d.replaceAll("_", " ").toUpperCase()}</h1>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Licence</th>
+                            <th>Nom</th>
+                            <th>Prénom</th>
+                            <th>Catégorie</th>
+                            <th>Club</th>
+                            <th>Chien</th>
+                            <th>Race</th>
+                            <th>Puce</th>
+                            <th style="display:none">Moyenne</th>
+                            <th style="display:none">Discipline</th>
+                            <th>Heure départ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+
+        data.forEach(l => {
+            html += `
+                <tr>
+                    <td>${l.licence}</td>
+                    <td>${l.nom}</td>
+                    <td>${l.prenom}</td>
+                    <td>${l.categorie}</td>
+                    <td>${l.club}</td>
+                    <td>${l.chien}</td>
+                    <td>${l.race}</td>
+                    <td>${l.puce}</td>
+                    <td style="display:none">${l.moyenne}</td>
+                    <td style="display:none">${l.discipline}</td>
+                    <td>${l.heure_depart || ""}</td>
+                </tr>
+            `;
+        });
+
+        html += `
+                    </tbody>
+                </table>
+            </body>
+            </html>
+        `;
+
+        w.document.write(html);
+        w.document.close();
+
+        w.onload = () => {
+            w.focus();
+            w.print();
+
+            const timer = setInterval(() => {
+                if (w.closed) {
+                    clearInterval(timer);
+                    index++;
+                    imprimerDiscipline();
+                }
+            }, 300);
+        };
+    }
+
+    imprimerDiscipline();
+});
+
+/* ---------------------------------------------------------
+   EXPORT PDF GLOBAL (nouvelle page par discipline)
+--------------------------------------------------------- */
+document.getElementById("btnExportPDFGlobal").addEventListener("click", () => {
+
+    if (!listesFinales || Object.keys(listesFinales).length === 0) {
+        alert("Génère d’abord les listes de départ.");
+        return;
+    }
+
+    const disciplines = Object.keys(listesFinales);
+
+    const w = window.open("", "_blank");
+
+    let html = `
+        <html>
+        <head>
+            <title>Listes de départ – PDF global</title>
+            <style>
+                body { font-family: Arial; padding: 20px; }
+                h1 { text-align: center; margin-bottom: 20px; }
+                h2 { margin-top: 20px; text-align: center; }
+                table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+                th, td { border: 1px solid #000; padding: 6px; font-size: 12px; }
+                th:nth-child(9), td:nth-child(9) { display: none; }
+                th:nth-child(10), td:nth-child(10) { display: none; }
+                .page-break { page-break-before: always; }
+            </style>
+        </head>
+        <body>
+            <h1>LISTES DE DÉPART – PDF GLOBAL</h1>
+    `;
+
+    disciplines.forEach((d, index) => {
+        const data = listesFinales[d];
+
+        html += `
+            <div class="${index > 0 ? 'page-break' : ''}">
+                <h2>${d.replaceAll("_", " ").toUpperCase()}</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Licence</th>
+                            <th>Nom</th>
+                            <th>Prénom</th>
+                            <th>Catégorie</th>
+                            <th>Club</th>
+                            <th>Chien</th>
+                            <th>Race</th>
+                            <th>Puce</th>
+                            <th style="display:none">Moyenne</th>
+                            <th style="display:none">Discipline</th>
+                            <th>Heure départ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+
+        data.forEach(l => {
+            html += `
+                <tr>
+                    <td>${l.licence}</td>
+                    <td>${l.nom}</td>
+                    <td>${l.prenom}</td>
+                    <td>${l.categorie}</td>
+                    <td>${l.club}</td>
+                    <td>${l.chien}</td>
+                    <td>${l.race}</td>
+                    <td>${l.puce}</td>
+                    <td style="display:none">${l.moyenne}</td>
+                    <td style="display:none">${l.discipline}</td>
+                    <td>${l.heure_depart || ""}</td>
+                </tr>
+            `;
+        });
+
+        html += `
+                    </tbody>
+                </table>
+            </div>
+        `;
+    });
+
+    html += `
+        </body>
+        </html>
+    `;
+
+    w.document.write(html);
+    w.document.close();
+    w.focus();
+    w.print();
 });
 
 /* ---------------------------------------------------------
@@ -526,12 +850,14 @@ document.getElementById("btnReset").addEventListener("click", () => {
     resultats = [];
     resultatsGlobaux = [];
     filteredView = [];
+    listesFinales = {};
     document.querySelector("#tableResultat tbody").innerHTML = "";
     document.getElementById("chipStats").textContent = "0 inscrits fusionnés";
+    document.getElementById("zoneParametres").innerHTML = "";
     alert("Application réinitialisée.");
 });
-
 </script>
+
 </div>
 </body>
 </html>
