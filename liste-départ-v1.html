@@ -1,5 +1,5 @@
 <!-- ============================
-     PARTIE 1 — HTML + CSS
+     PARTIE 1 — HTML + CSS (Version 3 – Style Fédération)
 =============================== -->
 
 <!DOCTYPE html>
@@ -7,104 +7,234 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FFSLC – Générateur de listes de départ (Version 2)</title>
+<title>FFSLC – Générateur de listes de départ (Version 3)</title>
 
+<!-- Couleurs officielles style fédération -->
 <style>
+:root {
+    --bleu: #005bbb;
+    --bleu-fonce: #004099;
+    --rouge: #d40000;
+    --fond: #f4f6fa;
+    --fond-carte: #ffffff;
+    --texte: #1a1a1a;
+    --bordure: #dcdcdc;
+}
+
+/* Mode sombre automatique */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --fond: #0f0f0f;
+        --fond-carte: #1a1a1a;
+        --texte: #f0f0f0;
+        --bordure: #333333;
+    }
+}
+
+* {
+    box-sizing: border-box;
+}
+
 body {
-    font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background: #f5f5f5;
-    color: #222;
+    background: var(--fond);
+    color: var(--texte);
+    font-family: "Segoe UI", Roboto, Arial, sans-serif;
 }
+
+/* Bandeau officiel */
 header {
-    background: linear-gradient(90deg, #005bbb, #ff0000);
+    background: linear-gradient(90deg, var(--bleu), var(--rouge));
     color: white;
-    padding: 20px;
+    padding: 18px;
     text-align: center;
     font-size: 22px;
-    font-weight: bold;
+    font-weight: 700;
+    letter-spacing: 0.5px;
 }
+
+/* Conteneur principal */
 .container {
-    padding: 20px;
     max-width: 1200px;
     margin: auto;
+    padding: 18px;
 }
+
+/* Cartes modernisées */
 .card {
-    background: white;
-    padding: 20px;
-    margin-bottom: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    background: var(--fond-carte);
+    padding: 18px;
+    margin-bottom: 18px;
+    border-radius: 12px;
+    border: 1px solid var(--bordure);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
 }
+
+/* Titres */
+.card h2 {
+    margin-top: 0;
+    color: var(--bleu);
+    font-size: 20px;
+    border-left: 6px solid var(--bleu);
+    padding-left: 10px;
+}
+
+.card h3 {
+    margin-top: 15px;
+    color: var(--bleu-fonce);
+    font-size: 18px;
+}
+
+/* Boutons tactiles */
 button {
-    padding: 12px 20px;
+    padding: 14px 20px;
+    font-size: 16px;
+    border-radius: 8px;
     border: none;
-    border-radius: 6px;
     cursor: pointer;
-    font-size: 16px;
-    margin-right: 10px;
-    margin-top: 5px;
+    margin: 6px 6px 6px 0;
+    min-width: 200px;
+    touch-action: manipulation;
 }
-button.primary { background: #005bbb; color: white; }
-button.danger { background: #cc0000; color: white; }
-button.success { background: #008000; color: white; }
+
+button.primary {
+    background: var(--bleu);
+    color: white;
+}
+button.primary:hover {
+    background: var(--bleu-fonce);
+}
+
+button.success {
+    background: #008000;
+    color: white;
+}
+button.success:hover {
+    background: #006600;
+}
+
+button.danger {
+    background: var(--rouge);
+    color: white;
+}
+button.danger:hover {
+    background: #a00000;
+}
+
+/* Champs */
 input, select {
-    padding: 10px;
-    font-size: 16px;
-    margin: 5px 0;
     width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    margin: 6px 0 12px 0;
+    border-radius: 6px;
+    border: 1px solid var(--bordure);
+    background: var(--fond-carte);
+    color: var(--texte);
 }
+
+/* Tableau modernisé */
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 15px;
+    margin-top: 12px;
 }
+
 th, td {
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
+    padding: 12px;
+    border-bottom: 1px solid var(--bordure);
 }
+
 th {
+    background: #e8edf5;
+    color: #003f7f;
+    font-weight: 600;
     cursor: pointer;
-    background: #eee;
+}
+
+@media (prefers-color-scheme: dark) {
+    th {
+        background: #2a2a2a;
+        color: #c0d8ff;
+    }
+}
+
+/* Badge statistiques */
+#chipStats {
+    display: inline-block;
+    padding: 6px 14px;
+    background: #e0ecff;
+    color: #003f88;
+    border-radius: 999px;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+/* Responsive tablette */
+@media (max-width: 900px) {
+    button {
+        width: 100%;
+        margin-right: 0;
+    }
+
+    th, td {
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    header {
+        font-size: 20px;
+        padding: 14px;
+    }
 }
 
 /* Impression PDF */
 @media print {
-    @page { size: A4 portrait; margin: 10mm; }
-    header, button, input, select { display: none !important; }
-    table { font-size: 12px; border-collapse: collapse; width: 100%; }
-    th, td { border: 1px solid #000; padding: 6px; }
-    th:nth-child(9), td:nth-child(9),
-    th:nth-child(10), td:nth-child(10) { display: none; }
+    header, button, input, select, .card h2, .card h3 {
+        display: none !important;
+    }
+    body {
+        background: white;
+        color: black;
+    }
+    table {
+        font-size: 12px;
+        border-collapse: collapse;
+    }
+    th, td {
+        border: 1px solid #000;
+        padding: 6px;
+    }
 }
 </style>
 </head>
 
 <body>
 
-<header>FFSLC – Générateur de listes de départ (Version 2)</header>
+<header>FFSLC – Générateur de listes de départ (Version 3)</header>
 
 <div class="container">
 <!-- ============================
-     PARTIE 2 — INTERFACE HTML
+     PARTIE 2 — INTERFACE HTML (Version 3 – Style Fédération)
 =============================== -->
 
 <!-- FICHIERS D’ENTRÉE -->
 <div class="card">
-    <h2>📂 Fichiers d’entrée</h2>
+    <h2>📂 Import des fichiers</h2>
 
-    <label>Fichier des inscrits :</label>
+    <label for="fichierInscrits"><strong>Fichier des inscrits :</strong></label>
     <input type="file" id="fichierInscrits" accept=".csv,.xls,.xlsx">
 
-    <button id="btnReset" class="danger">♻️ Réinitialiser</button>
+    <button id="btnReset" class="danger">♻️ Réinitialiser l’application</button>
 </div>
 
 <!-- PARAMÈTRES GLOBAUX -->
 <div class="card">
     <h2>⏱️ Paramètres globaux</h2>
 
-    <h3>Canicross</h3>
+    <!-- CANICROSS -->
+    <h3>🏃‍♂️ Canicross</h3>
     <label>Heure de départ :</label>
     <input type="time" id="heureCanicross" value="09:00">
 
@@ -121,7 +251,8 @@ th {
     <label>Intervalle (secondes) :</label>
     <input type="number" id="intervalleCanicross" value="30">
 
-    <h3>Canitrail</h3>
+    <!-- CANITRAIL -->
+    <h3>⛰️ Canitrail</h3>
     <label>Heure de départ :</label>
     <input type="time" id="heureCanitrail" value="08:00">
 
@@ -138,18 +269,23 @@ th {
     <label>Intervalle (secondes) :</label>
     <input type="number" id="intervalleCanitrail" value="30">
 
-    <h3>Canivtt</h3>
+    <!-- CANIVTT -->
+    <h3>🚴‍♂️ Canivtt</h3>
     <label>Heure de départ :</label>
     <input type="time" id="heureCanivtt" value="10:00">
 
-    <h3>Canipédicycle</h3>
+    <!-- CANIPÉDICYCLE -->
+    <h3>🚴 Canipédicycle</h3>
     <label>Heure de départ :</label>
     <input type="time" id="heureCanipedicycle" value="11:00">
 </div>
 
 <!-- PARAMÈTRES DYNAMIQUES -->
 <div class="card">
-    <h2>⚙️ Paramètres spécifiques par course</h2>
+    <h2>⚙️ Paramètres spécifiques par discipline</h2>
+    <p style="margin-top:-5px; color:#555;">
+        Ces paramètres sont générés automatiquement après la fusion des inscrits et des résultats.
+    </p>
     <div id="zoneParametres"></div>
 </div>
 
@@ -159,16 +295,16 @@ th {
 
     <button id="btnGenererListes" class="success">📝 Générer les listes de départ</button>
 
-    <button id="btnExportPDFParDiscipline" class="primary"></button>
+    <button id="btnExportPDFParDiscipline" class="primary">📄 </button>
     <button id="btnExportPDFGlobal" class="primary">📄 Export PDF – toutes les listes</button>
 
     <button id="btnExportExcelMulti" class="primary">📘 Export Excel multi‑onglets</button>
     <button id="btnExporterTout" class="success">📦 Exporter tout</button>
 </div>
 
-<!-- TABLEAU -->
+<!-- TABLEAU DES INSCRITS -->
 <div class="card">
-    
+    <h2>📋 Tableau des inscrits fusionnés</h2>
 
     <p id="chipStats">0 inscrits fusionnés</p>
 
@@ -183,6 +319,7 @@ th {
                 <th>Chien</th>
                 <th>Race</th>
                 <th>Puce</th>
+                <th>Dossard</th>
                 <th>Moyenne</th>
                 <th>Discipline</th>
                 <th>Heure départ</th>
@@ -192,7 +329,7 @@ th {
     </table>
 </div>
 <!-- ============================
-     PARTIE 3 — LOGIQUE JS
+     PARTIE 3 — LOGIQUE JS (Version 3)
 =============================== -->
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
@@ -322,7 +459,7 @@ function lireFichier(input, callback) {
 }
 
 /* ---------------------------------------------------------
-   FONCTION FUSIONNER
+   FUSION INSCRITS + RÉSULTATS
 --------------------------------------------------------- */
 function fusionner() {
 
@@ -366,7 +503,7 @@ function fusionner() {
         const id = d.replace(/[^a-z0-9]/gi, "_");
 
         let html = `
-            <div class="card" style="background:#f0f7ff; margin-top:15px;">
+            <div class="card" style="background:#eef5ff; margin-top:15px;">
                 <h3>${d.replaceAll("_", " ").toUpperCase()}</h3>
 
                 <label>Heure de départ :</label>
@@ -398,7 +535,7 @@ function fusionner() {
 }
 
 /* ---------------------------------------------------------
-   CHARGEMENT INSCRITS + FUSION AUTOMATIQUE
+   CHARGEMENT INSCRITS + FUSION
 --------------------------------------------------------- */
 document.getElementById("fichierInscrits").addEventListener("change", () => {
     lireFichier(document.getElementById("fichierInscrits"), data => {
@@ -425,8 +562,36 @@ document.getElementById("fichierInscrits").addEventListener("change", () => {
 });
 
 /* ---------------------------------------------------------
-   AFFICHAGE TABLEAU
+   AFFICHAGE TABLEAU + TRI DYNAMIQUE
 --------------------------------------------------------- */
+let triColonne = null;
+let triAsc = true;
+
+document.querySelectorAll("#tableResultat th").forEach((th, index) => {
+    th.addEventListener("click", () => {
+        const cle = [
+            "licence","nom","prenom","categorie","club","chien","race","puce",
+            "dossard","moyenne","discipline","heure_depart"
+        ][index];
+
+        if (triColonne === cle) triAsc = !triAsc;
+        else { triColonne = cle; triAsc = true; }
+
+        filteredView.sort((a, b) => {
+            let va = a[cle] || "";
+            let vb = b[cle] || "";
+
+            if (!isNaN(va) && !isNaN(vb)) {
+                va = Number(va); vb = Number(vb);
+            }
+
+            return triAsc ? (va > vb ? 1 : -1) : (va < vb ? 1 : -1);
+        });
+
+        afficherTableau();
+    });
+});
+
 function afficherTableau() {
     const tbody = document.querySelector("#tableResultat tbody");
     tbody.innerHTML = "";
@@ -455,7 +620,7 @@ function afficherTableau() {
 }
 </script>
 <!-- ============================
-     PARTIE 4 — GÉNÉRATION + EXPORTS + PDF + RESET
+     PARTIE 4 — GÉNÉRATION + EXPORTS + PDF + RESET (Version 3)
 =============================== -->
 
 <script>
@@ -552,7 +717,7 @@ function genererIndividuel30s(liste, heureDepart) {
 --------------------------------------------------------- */
 document.getElementById("btnGenererListes").addEventListener("click", () => {
 
-    mettreAJourParametres(); // 🔥 essentiel
+    mettreAJourParametres();
 
     const disciplines = Object.keys(paramDepart);
     listesFinales = {};
@@ -632,7 +797,7 @@ document.getElementById("btnExportExcelMulti").addEventListener("click", () => {
 });
 
 /* ---------------------------------------------------------
-   EXPORTER TOUT
+   EXPORTER TOUT (CSV + Excel)
 --------------------------------------------------------- */
 document.getElementById("btnExporterTout").addEventListener("click", () => {
     if (!listesFinales || Object.keys(listesFinales).length === 0) {
@@ -680,7 +845,7 @@ document.getElementById("btnExportPDFParDiscipline").addEventListener("click", (
                 <title>${d}</title>
                 <style>
                     body { font-family: Arial; padding: 20px; }
-                    h1 { text-align: center; margin-bottom: 20px; }
+                    h1 { text-align: center; margin-bottom: 20px; color:#003f7f; }
                     table { width: 100%; border-collapse: collapse; }
                     th, td { border: 1px solid #000; padding: 6px; font-size: 12px; }
                 </style>
@@ -769,8 +934,8 @@ document.getElementById("btnExportPDFGlobal").addEventListener("click", () => {
             <title>Listes de départ – PDF global</title>
             <style>
                 body { font-family: Arial; padding: 20px; }
-                h1 { text-align: center; margin-bottom: 20px; }
-                h2 { margin-top: 20px; text-align: center; }
+                h1 { text-align: center; margin-bottom: 20px; color:#003f7f; }
+                h2 { margin-top: 20px; text-align: center; color:#003f7f; }
                 table { width: 100%; border-collapse: collapse; margin-top: 10px; }
                 th, td { border: 1px solid #000; padding: 6px; font-size: 12px; }
                 .page-break { page-break-before: always; }
@@ -858,4 +1023,3 @@ document.getElementById("btnReset").addEventListener("click", () => {
 </div>
 </body>
 </html>
-
