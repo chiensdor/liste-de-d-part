@@ -287,7 +287,6 @@ function chargerResultatsAuto() {
                         discipline: normaliserDiscipline(getCol(l, ["nom de la course", "Course"]))
                     }));
 
-                    // 🔥 SIGNAL : résultats prêts
                     resultatsPrets = true;
                     if (inscritsPrets) fusionner();
                 }
@@ -343,7 +342,6 @@ function fusionner() {
 
     const disciplinesDetectees = [...new Set(resultatsGlobaux.map(r => r.discipline))];
 
-    // Ajouter les disciplines manquantes
     const disciplinesManquantes = [
         "canicross_court_dimanche",
         "canicross_long_samedi",
@@ -405,8 +403,7 @@ function fusionner() {
 document.getElementById("fichierInscrits").addEventListener("change", () => {
     lireFichier(document.getElementById("fichierInscrits"), data => {
 
-        // 🔥 SUPPRESSION DE LA PREMIÈRE LIGNE
-        data = data.slice(1);
+        data = data.slice(1); // suppression première ligne
 
         inscrits = data.map(l => ({
             licence: getCol(l, ["Licence", "LICENCE"]),
@@ -417,12 +414,12 @@ document.getElementById("fichierInscrits").addEventListener("change", () => {
             chien: getCol(l, ["Chien", "#1 Chien - nom"]),
             race: getCol(l, ["Race", "#1 Chien - race"]),
             puce: getCol(l, ["Puce", "#1 Chien - puce"]),
+            dossard: getCol(l, ["Dossard", "dossard", "Numéro", "Numero", "N°", "Dossard coureur"]),
             discipline: normaliserDiscipline(getCol(l, ["Course", "nom de la course"]))
         }));
 
         inscritsPrets = true;
 
-        // 🔥 Fusion automatique seulement si résultats déjà chargés
         if (resultatsPrets) fusionner();
     });
 });
@@ -445,6 +442,7 @@ function afficherTableau() {
             <td>${l.chien}</td>
             <td>${l.race}</td>
             <td>${l.puce}</td>
+            <td>${l.dossard || ""}</td>
             <td>${l.moyenne}</td>
             <td>${l.discipline}</td>
             <td>${l.heure_depart || ""}</td>
@@ -461,6 +459,21 @@ function afficherTableau() {
 =============================== -->
 
 <script>
+/* ---------------------------------------------------------
+   MISE À JOUR DES PARAMÈTRES AVANT GÉNÉRATION
+--------------------------------------------------------- */
+function mettreAJourParametres() {
+    for (let d in paramDepart) {
+        const id = d.replace(/[^a-z0-9]/gi, "_");
+
+        const heureInput = document.getElementById("heure_" + id);
+        const modeInput = document.getElementById("mode_" + id);
+
+        if (heureInput) paramDepart[d].heure = heureInput.value;
+        if (modeInput) paramDepart[d].mode = modeInput.value;
+    }
+}
+
 /* ---------------------------------------------------------
    TRI PAR MOYENNE
 --------------------------------------------------------- */
@@ -539,19 +552,9 @@ function genererIndividuel30s(liste, heureDepart) {
 --------------------------------------------------------- */
 document.getElementById("btnGenererListes").addEventListener("click", () => {
 
-    const modeCX = Number(document.getElementById("modeCanicross").value);
-    const modeCT = Number(document.getElementById("modeCanitrail").value);
-
-    const hCX = document.getElementById("heureCanicross").value;
-    const hCT = document.getElementById("heureCanitrail").value;
-    const hVTT = document.getElementById("heureCanivtt").value;
-    const hPEDI = document.getElementById("heureCanipedicycle").value;
-
-    const intervalleCX = Number(document.getElementById("intervalleCanicross").value);
-    const intervalleCT = Number(document.getElementById("intervalleCanitrail").value);
+    mettreAJourParametres(); // 🔥 essentiel
 
     const disciplines = Object.keys(paramDepart);
-
     listesFinales = {};
 
     disciplines.forEach(d => {
@@ -566,7 +569,10 @@ document.getElementById("btnGenererListes").addEventListener("click", () => {
         } else if (mode == 20 || mode == 40) {
             listesFinales[d] = genererVagues(liste, heure, Number(mode));
         } else {
-            const intervalle = d.includes("trail") ? intervalleCT : intervalleCX;
+            const intervalle = d.includes("trail")
+                ? Number(document.getElementById("intervalleCanitrail").value)
+                : Number(document.getElementById("intervalleCanicross").value);
+
             listesFinales[d] = genererGroupes(liste, heure, Number(mode), intervalle);
         }
     });
@@ -626,7 +632,7 @@ document.getElementById("btnExportExcelMulti").addEventListener("click", () => {
 });
 
 /* ---------------------------------------------------------
-   EXPORTER TOUT (PDF par discipline supprimé)
+   EXPORTER TOUT
 --------------------------------------------------------- */
 document.getElementById("btnExporterTout").addEventListener("click", () => {
     if (!listesFinales || Object.keys(listesFinales).length === 0) {
@@ -639,14 +645,13 @@ document.getElementById("btnExporterTout").addEventListener("click", () => {
         exporterExcel(listesFinales[d], `depart_${d}.xlsx`);
     }
 
-    exporterExcelMultiOnglets(listesFinales, "depart_multi_onglets.xlsx");
     exporterExcel(resultatsGlobaux, "depart_global.xlsx");
 
     alert("Tous les fichiers ont été exportés.");
 });
 
 /* ---------------------------------------------------------
-   EXPORT PDF PAR DISCIPLINE (corrigé)
+   EXPORT PDF PAR DISCIPLINE
 --------------------------------------------------------- */
 document.getElementById("btnExportPDFParDiscipline").addEventListener("click", () => {
 
@@ -678,8 +683,6 @@ document.getElementById("btnExportPDFParDiscipline").addEventListener("click", (
                     h1 { text-align: center; margin-bottom: 20px; }
                     table { width: 100%; border-collapse: collapse; }
                     th, td { border: 1px solid #000; padding: 6px; font-size: 12px; }
-                    th:nth-child(9), td:nth-child(9) { display: none; }
-                    th:nth-child(10), td:nth-child(10) { display: none; }
                 </style>
             </head>
             <body>
@@ -687,6 +690,7 @@ document.getElementById("btnExportPDFParDiscipline").addEventListener("click", (
                 <table>
                     <thead>
                         <tr>
+                            <th>Dossard</th>
                             <th>Licence</th>
                             <th>Nom</th>
                             <th>Prénom</th>
@@ -695,8 +699,6 @@ document.getElementById("btnExportPDFParDiscipline").addEventListener("click", (
                             <th>Chien</th>
                             <th>Race</th>
                             <th>Puce</th>
-                            <th style="display:none">Moyenne</th>
-                            <th style="display:none">Discipline</th>
                             <th>Heure départ</th>
                         </tr>
                     </thead>
@@ -706,6 +708,7 @@ document.getElementById("btnExportPDFParDiscipline").addEventListener("click", (
         data.forEach(l => {
             html += `
                 <tr>
+                    <td>${l.dossard || ""}</td>
                     <td>${l.licence}</td>
                     <td>${l.nom}</td>
                     <td>${l.prenom}</td>
@@ -714,8 +717,6 @@ document.getElementById("btnExportPDFParDiscipline").addEventListener("click", (
                     <td>${l.chien}</td>
                     <td>${l.race}</td>
                     <td>${l.puce}</td>
-                    <td style="display:none">${l.moyenne}</td>
-                    <td style="display:none">${l.discipline}</td>
                     <td>${l.heure_depart || ""}</td>
                 </tr>
             `;
@@ -749,7 +750,7 @@ document.getElementById("btnExportPDFParDiscipline").addEventListener("click", (
 });
 
 /* ---------------------------------------------------------
-   EXPORT PDF GLOBAL (nouvelle page par discipline)
+   EXPORT PDF GLOBAL
 --------------------------------------------------------- */
 document.getElementById("btnExportPDFGlobal").addEventListener("click", () => {
 
@@ -772,8 +773,6 @@ document.getElementById("btnExportPDFGlobal").addEventListener("click", () => {
                 h2 { margin-top: 20px; text-align: center; }
                 table { width: 100%; border-collapse: collapse; margin-top: 10px; }
                 th, td { border: 1px solid #000; padding: 6px; font-size: 12px; }
-                th:nth-child(9), td:nth-child(9) { display: none; }
-                th:nth-child(10), td:nth-child(10) { display: none; }
                 .page-break { page-break-before: always; }
             </style>
         </head>
@@ -790,6 +789,7 @@ document.getElementById("btnExportPDFGlobal").addEventListener("click", () => {
                 <table>
                     <thead>
                         <tr>
+                            <th>Dossard</th>
                             <th>Licence</th>
                             <th>Nom</th>
                             <th>Prénom</th>
@@ -798,8 +798,6 @@ document.getElementById("btnExportPDFGlobal").addEventListener("click", () => {
                             <th>Chien</th>
                             <th>Race</th>
                             <th>Puce</th>
-                            <th style="display:none">Moyenne</th>
-                            <th style="display:none">Discipline</th>
                             <th>Heure départ</th>
                         </tr>
                     </thead>
@@ -809,6 +807,7 @@ document.getElementById("btnExportPDFGlobal").addEventListener("click", () => {
         data.forEach(l => {
             html += `
                 <tr>
+                    <td>${l.dossard || ""}</td>
                     <td>${l.licence}</td>
                     <td>${l.nom}</td>
                     <td>${l.prenom}</td>
@@ -817,8 +816,6 @@ document.getElementById("btnExportPDFGlobal").addEventListener("click", () => {
                     <td>${l.chien}</td>
                     <td>${l.race}</td>
                     <td>${l.puce}</td>
-                    <td style="display:none">${l.moyenne}</td>
-                    <td style="display:none">${l.discipline}</td>
                     <td>${l.heure_depart || ""}</td>
                 </tr>
             `;
@@ -839,7 +836,7 @@ document.getElementById("btnExportPDFGlobal").addEventListener("click", () => {
     w.document.write(html);
     w.document.close();
     w.focus();
-    w.print();
+    setTimeout(() => w.print(), 300);
 });
 
 /* ---------------------------------------------------------
@@ -861,3 +858,4 @@ document.getElementById("btnReset").addEventListener("click", () => {
 </div>
 </body>
 </html>
+
