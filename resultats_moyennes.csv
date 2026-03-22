@@ -1635,11 +1635,9 @@ C002112,SECRET,EVA,CFS,Les canisavoyards,DINGO,Alaska husky,978 101 082 187 884,
 C002230,BLANDIN,QUENTIN,CHS,Canivulcain,UNO,Braque Hongrois,250 268 780 622 443,8.00,1
 C001359,ICARD,DAVID,CHV1,Les canisavoyards,TA'AORA,Euro Sled Hound,250 269 610 350 005,9.00,1
 C000198,OLIVREAU,MATHIEU,CHV1,Les canisavoyards,CLOVIS,EUROHOUND,528 140 100 619 711,10.00,1
-"C001207
-",LUNETTA,REMI,CHS,Cani'potes 42,SIMBA,Husky sibérien,250 268 780 107 190,11.00,1
+C001207,LUNETTA,REMI,CHS,Cani'potes 42,SIMBA,Husky sibérien,250 268 780 107 190,11.00,1
 C004931,MICHAUX,HELENE,CFV1,Canisportifs d'la yaute,UMAK,berger hollandais,250 268 780 846 455,12.00,1
-"C000529
-",MICHARD,CLARA,CFS,Canivulcain,GALAXY,Alaskan,752 093 200 125 698,13.00,1
+C000529,MICHARD,CLARA,CFS,Canivulcain,GALAXY,Alaskan,752 093 200 125 698,13.00,1
 C003522,BOURGEOIS,PHILIPPE,CHV2,Cani'potes 42,ULKO,Border collie,250 268 780 694 632,14.00,1
 C000606,NICOLAS,JONATHAN,CHS,Canicross des monts,POWER,Braque allemand,250 268 743 174 077,15.00,1
 C000069,ALLIGROS,NICOLAS,CHV1,Loire nord canisports,TOSCA,Eurohound,250 269 610 534 087,16.00,1
@@ -1652,8 +1650,7 @@ C004930,EDOH,JOAN,CHV1,Loire nord canisports,HADES,Croisé,250 269 811 688 038,2
 C005157,GRANGE,ARNAUD,CHS,Cani'potes 42,SEIKO,Boxer,250 269 590 532 891,23.00,1
 C003619,LAFONT,ANTOINE,CHS,Canivulcain,LOUNA,Malinois,250 269 590 284 251,24.00,1
 C001770,ASPESANI,DELPHINE,CFS,Loire nord canisports,UMIKO,GREYSTER,250 269 101 136 273,25.00,1
-"C000497
-",NEYRET-VACHEY,RAPHAEL,CHV2,Loire nord canisports,M'SO,Alaskan,250 268 712 503 325,26.00,1
+C000497,NEYRET-VACHEY,RAPHAEL,CHV2,Loire nord canisports,M'SO,Alaskan,250 268 712 503 325,26.00,1
 C006266,BABAULT,MERYL,CFS,Les canisavoyards,PEPS,BORDER COLLIE,250 268 732 499 724,27.00,1
 C003625,SOTTON,JULIEN,CHS,Car,TACOS,Braque de Weimar,250 269 590 779 054,28.00,1
 C001757,VIDAL,AMELIE,CFS,Les cantal'loups,ORCA,Berger Belge Malinois,250 269 811 771 580,29.00,1
@@ -1798,7 +1795,7 @@ J005106,ROUQUET,LOUNA,CPFJ,Ardrome canicross,Tsuky,Husky de sibérie,250 268 780
 C000900,BUEKENHOUT,LUCIE,CPFS,Les canisavoyards,Chewie,Husky Sibérien,250 269 590 756 564,13.00,1
 C000618,CARBO,RAPHAEL,CPHS,Canicross des monts,odin,Husky de siberie,250 268 712 717 668,14.00,1
 C001299,Quehen,Antony,CHS,Afond'chien,Oz,ESD ALASKAN,250 269 608 101 180,1.00,1
-C001750,Chouquet,Ludovic,CHV1,Canikazes 86,"Ulys ","braque allemand ",250 268 780 755 572,2.00,1
+C001750,CHOUQUET,Ludovic,CHV1,Canikazes 86,ULYS,"braque allemand ",250 268 780 755 572,34.25,4
 C002537,"Le Bail ",Niko,CHV2,Canicrocoeur 85,Vugo,Braque Allemand,250 269 611 082 677,3.00,1
 C005451,Bossard,Vincent,CHS,Les canibarjos,César,X braque/setter,250 268 780 505 587,4.00,1
 C002864,Gouband,Brice,CHS,Canikazes 86,Taïro,GREYSTER,250 269 591 225 059,5.00,1
@@ -2129,7 +2126,6 @@ C002428,MORCILLO,Arnaud,CHS,Lca canicross 24,Rio,Malinoise,250 268 732 731 901,6
 C000837,BOURASSEAU,Cyril,CHS,Les canidol' bressuirais,TaÔro,Greyster,250 269 591 227 623,7.00,1
 C000465,BOURDOU,cyril,CHV1,Canisharks 33,vega,greyster,250 268 502 286 119,8.00,1
 C002864,GOUBAND,Brice,CHS,Canikazes 86,taÔro,GREYSTER,250 269 591 225 059,9.00,1
-C001750,CHOUQUET,Ludovic,CHV1,Canikazes 86,Ulys,braque allemand,250 268 780 755 572,10.00,1
 C001959,ROGER,Joris,CHS,Sport canin team 16,Tao,Border Collie,250 269 590 841 104,11.00,1
 C000743,MARCHAND,Anthony,CHS,Canikazes 86,Ivar,Braque Allemand,250 269 608 614 858,12.00,1
 C000518,VINCENT,ValÈry,CHV2,Sport canin team 16,Marty,croisÈ Braque / Labrador,250 269 610 615 999,12.00,1
@@ -4174,24 +4170,24 @@ C006512,Ben,Hélène,CPFS,A.S.C.C,RAMSES,braque Allemand,250 268 743 293 910,15.
 C003028,WAELES,MAÏLYS,CPFS,Cross Pattes,Mystic,Husky Sibérien,250 268 900 010 881,16.00,1
 C004660,Hanique,Mélanie,CPFS,Cross Pattes,Sushi,staffordshire croisé,250 269 610 226 497,17.00,1
 C001032,brunet,sebastien,CPHV,A.S.C.C,Reïky,altdeutsche Schaferunde,250 268 501 959 725,18.00,1
-C004235,BEYEN,Sandra,CMFV,A.S.C.C,Ozzie,berger australien,250 269 811 581 462,NaN,0
-,Dachy,Aline,CMFV,RACING CLUB ARRAS CANICROSS,Ares,x braque,642 093 400 127 068,NaN,0
-L002570,Decoopman,Morgane,CMFS,Cross Pattes,Uguette,croisé akita Inu,250 269 100 328 524,NaN,0
-,Delannoy,Emmanuelle,CMFV,Cross Pattes,Cosmo,All deutschafferünd,250 268 780 808 897,NaN,0
-C001135,Derisbourg,Virginie,CMHV,Cross Pattes,Maeva,boxer,250 269 802 758 435,NaN,0
-,GEBHART-ABIER,Mégane,CMFS,,Vecna,"chien loup de Saarlos ",250 269 610 342 076,NaN,0
-L006753,godart,suzy,CMFV,Cross Pattes,Samy,berger australien,250 269 608 807 285,NaN,0
-C001055,Lamerant,guillaume,CMHV,Cross Pattes,Nabucco Black,Berger australien,250 269 500 742 988,NaN,0
-L004809,Le Henaff,Angélique,CMFS,Cross Pattes,UNAYA,BERGER AUSTRALIEN,250 268 723 169 136,NaN,0
-,Lecasble,Caroline,CMFV,,ULLA,BERGER ALLEMAND,250 269 591 254 775,NaN,0
-C001472,Leclercq,Anne,CMFV,TEAM SPORT CANINS 51,S'ZIA,CROISE BORDER,250 268 780 619 936,NaN,0
-C000759,Lepillet,Megane,CMFS,Cross Pattes,"Uwan ",Husky Sibérien,250 269 300 273 122,NaN,0
-C002060,MAJOREK,cindy,CMFV,Cross Pattes,Ural,Bouledogue français,250 268 780 990 114,NaN,0
-L002167,Pagniez,Sandra,CMFV,Canicross club CAUDRY,Olaf,Cocker Anglais,250 269 811 517 267,NaN,0
-C001029,pichon,laurie,CMFS,A.S.C.C,Belle,croisé teckel,250 268 500 696 703,NaN,0
-C001275,Salvary,Audrey,CMFS,A.S.C.C,Oscard,Teckel,250 268 712 689 701,NaN,0
-,Sequino,Florine,CMFV,A.S.C.C,Simba,border collie,250 269 802 904 188,NaN,0
-C000956,Van Overloop,Anaïs,CMFV,Doggy run and bike 80,Dune,Malinois,250 269 591 068 295,NaN,0
+C004235,BEYEN,Sandra,CMFV,A.S.C.C,Ozzie,berger australien,250 269 811 581 462,0,0
+,Dachy,Aline,CMFV,RACING CLUB ARRAS CANICROSS,Ares,x braque,642 093 400 127 068,0,0
+L002570,Decoopman,Morgane,CMFS,Cross Pattes,Uguette,croisé akita Inu,250 269 100 328 524,0,0
+,Delannoy,Emmanuelle,CMFV,Cross Pattes,Cosmo,All deutschafferünd,250 268 780 808 897,0,0
+C001135,Derisbourg,Virginie,CMHV,Cross Pattes,Maeva,boxer,250 269 802 758 435,0,0
+,GEBHART-ABIER,Mégane,CMFS,,Vecna,"chien loup de Saarlos ",250 269 610 342 076,0,0
+L006753,godart,suzy,CMFV,Cross Pattes,Samy,berger australien,250 269 608 807 285,0,0
+C001055,Lamerant,guillaume,CMHV,Cross Pattes,Nabucco Black,Berger australien,250 269 500 742 988,0,0
+L004809,Le Henaff,Angélique,CMFS,Cross Pattes,UNAYA,BERGER AUSTRALIEN,250 268 723 169 136,0,0
+,Lecasble,Caroline,CMFV,,ULLA,BERGER ALLEMAND,250 269 591 254 775,0,0
+C001472,Leclercq,Anne,CMFV,TEAM SPORT CANINS 51,S'ZIA,CROISE BORDER,250 268 780 619 936,0,0
+C000759,Lepillet,Megane,CMFS,Cross Pattes,"Uwan ",Husky Sibérien,250 269 300 273 122,0,0
+C002060,MAJOREK,cindy,CMFV,Cross Pattes,Ural,Bouledogue français,250 268 780 990 114,0,0
+L002167,Pagniez,Sandra,CMFV,Canicross club CAUDRY,Olaf,Cocker Anglais,250 269 811 517 267,0,0
+C001029,pichon,laurie,CMFS,A.S.C.C,Belle,croisé teckel,250 268 500 696 703,0,0
+C001275,Salvary,Audrey,CMFS,A.S.C.C,Oscard,Teckel,250 268 712 689 701,0,0
+,Sequino,Florine,CMFV,A.S.C.C,Simba,border collie,250 269 802 904 188,0,0
+C000956,Van Overloop,Anaïs,CMFV,Doggy run and bike 80,Dune,Malinois,250 269 591 068 295,0,0
 C002520,KRZESAJ,Dimitri,CHS,ASLA,Flydog's Idaho,ESD,250 269 101 045 250,1.67,3
 C002517,CAMBIEN,Gauthier,CHS,ASLA,Grizzly,ESD,250 269 811 522 119,2.00,1
 C002503,BÉLOTTI,Hugo,CHS,ASLA,Patton,Greyster,250 269 811 728 916,3.00,1
@@ -4569,7 +4565,7 @@ C004899,CASTELLANI,Florence,CFV2,Cani'aventure,TAiA,BERGER BLANC SUISSE,250 268 
 C001696,"HACHOUTI ","Inès ",CFS,Cani-on 82,"laika ","husky de Sibérie ",250 269 300 132 526,56.00,1
 ,JAMME,Léa,CFS,,Tartine des Bois de la Bro,Cocker Anglais,250 269 610 718 799,57.00,1
 C004086,PIERRARD,Noémie,CFS,Cani folie association,S'Nacho,Golden Retreiver,250 269 608 843 230,58.00,1
-C005872,Besnard,patrice,CRHV,Cani'aventure,AÏKO/SALTO,BEAGLE,250 269 590 704 992,NaN,0
+C005872,Besnard,patrice,CRHV,Cani'aventure,AÏKO/SALTO,BEAGLE,250 269 590 704 992,0,0
 C005509,"sulpice ","Virginie ",CRFS,Canipat'87,Jenna,berger australien,250 268 732 224 458,16.00,1
 ,Destrieux Moncomble,Marie,CRFS,Sports canins des grands lacs,Shamallow Schumacher Mytook And Co,Kelpie Australien,250 268 780 093 396,16.00,1
 C001902,LECLERCQ,VALENTINE,CRFS,Canipat'87,"O'Rio ","Jack russel terrier ",250 268 712 762 583,16.00,1
@@ -4601,16 +4597,16 @@ C003209,hemery,damien,CRHS,Cani-run36,pandora,"husky de siberie ",250 269 608 47
 L005930,Bonneau,"Yannick ",CRHS,Canipat'87,Uranie,"chien finois de Laponie ",250 269 101 102 944,16.00,1
 L002751,Lampre,Bruno,CRHV,Canipat'87,Unaï,Jack/Border,250 269 300 292 769,16.00,1
 ,MARTIN,Ludovic,CRHV,Canikazes 86,NIGHT SHADOW,MALAMUTE D'ALASKA,250 269 811 386 237,16.00,1
-,"Filippetto ","Annie ",CMFV,,Théana,Jack russel terrier,250 269 591 260 813,NaN,0
-,Filippetto,Patrick,CMHV,,Thor,Jack russel terrier,250 269 591 261 465,NaN,0
-L001771,lamothe,estelle,CMFS,Canipat'87,"phantome ","husky sibérien ",250 269 610 675 669,NaN,0
-,CLEMENT,Fanny,CMFV,,volt,greyster,900 113 000 562 187,NaN,0
-L005931,"Francisco ","Emilie ",CMFS,Canipat'87,Tennessee des Jardins de Vérone,"Chien Finnois de Laponie ",250 269 590 643 066,NaN,0
-,Bertorello,Marjorie,CMFS,,shadow,berger australien,250 268 501 986 027,NaN,0
-C002225,Lascoux,Carole,CMFV,Entente athlétique aubussonnaise section canicross,Ossau,border collie x berger australien,250 268 501 635 684,NaN,0
-C004225,Bougault,Céline,CMFS,Entente athlétique aubussonnaise section canicross,"Shinra ","Husky de Sibérie ",250 268 780 024 060,NaN,0
-,besselas,sylvia,CMFV,,Talia,"berger allemand ",250 269 610 277 176,NaN,0
-C000114,FILIPPETTO,Florence,CMFV,Dogs runners,Taz,Jack russel terrier,250 269 591 261 669,NaN,0
+,"Filippetto ","Annie ",CMFV,,Théana,Jack russel terrier,250 269 591 260 813,0,0
+,Filippetto,Patrick,CMHV,,Thor,Jack russel terrier,250 269 591 261 465,0,0
+L001771,lamothe,estelle,CMFS,Canipat'87,"phantome ","husky sibérien ",250 269 610 675 669,0,0
+,CLEMENT,Fanny,CMFV,,volt,greyster,900 113 000 562 187,0,0
+L005931,"Francisco ","Emilie ",CMFS,Canipat'87,Tennessee des Jardins de Vérone,"Chien Finnois de Laponie ",250 269 590 643 066,0,0
+,Bertorello,Marjorie,CMFS,,shadow,berger australien,250 268 501 986 027,0,0
+C002225,Lascoux,Carole,CMFV,Entente athlétique aubussonnaise section canicross,Ossau,border collie x berger australien,250 268 501 635 684,0,0
+C004225,Bougault,Céline,CMFS,Entente athlétique aubussonnaise section canicross,"Shinra ","Husky de Sibérie ",250 268 780 024 060,0,0
+,besselas,sylvia,CMFV,,Talia,"berger allemand ",250 269 610 277 176,0,0
+C000114,FILIPPETTO,Florence,CMFV,Dogs runners,Taz,Jack russel terrier,250 269 591 261 669,0,0
 C000530,REIFF,Remi,CHS,Canivulcain,Ujjayi,ESD,250 269 610 912 675,3.50,2
 C002873,MARTIN,Yohan,CHS,Canikazes 86,Rocky,Sans poils,250 268 743 280 294,6.50,2
 2004-232,CLAUS,Nathan,CHS,Addiction racing team,Psyché,Berger Hollandais,250 268 780 021 631,8.00,1
@@ -8527,7 +8523,6 @@ C001695,LE BOURT,Enora,CFS,CANICROSS 30,UTAH,GREYSTER,250268780261552,54.50,2
 C006215,AIGON,Yohan,CHS,CANISPORT ET TRAIL RUNNING D'OCCITANIE,SHELBY,BORDER COLLIE,250269610228134,53.50,2
 C001621,SEGURA,Jean-Christophe,CHV2,DOG'CCITANIE,OCTAVE,EUROHOUND,250269811550134,53.50,2
 C001207,LUNETTA,Rémi,CHS,CANI'POTES 42,SIMBA,HUSKY SIBÉRIEN,250268780107190,57.50,2
-C001750,CHOUQUET,Ludovic,CHV1,CANIKAZES 86,ULYS,BRAQUE ALLEMAND,250268780755572,62.50,2
 C001352,AMANCIO,Caroline,CFS,LES CANIPIRATES,KIARA,MALINOIS,250269608381181,54.50,2
 C002504,BÉLOTTI,Pascal,CHV1,ASLA,SIEGFRIED,E.S.D,250268780413034,53.50,2
 C006176,HERVÉ,Marie,CFS,CANI CLEB'S 89,GALA,BRAQUE ALLEMAND,250269610835124,62.00,2
