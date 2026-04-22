@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Chrono par dossard - créer par Robert AURAY version 3.02 COPYRIGHT </title>
+
+  <style>
+    /* ======== STYLE FFSLC ======== */
+
+    /* Couleurs fédérales */
+    :root {
+      --ffslc-blue: #003A70;
+      --ffslc-red: #E2001A;
+      --ffslc-grey-light: #F2F2F2;
+      --ffslc-grey-mid: #CCCCCC;
+      --ffslc-black: #000000;
+      --ffslc-white: #FFFFFF;
+    }
+
+    body { font-family: sans-serif; margin: 20px; }
+
+    /* Bandeau discipline */
+    #disciplineBanner {
+      background: var(--ffslc-blue);
+      color: var(--ffslc-white);
+      border-bottom: 4px solid var(--ffslc-red);
+      padding: 15px;
+      font-size: 32px;
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-bottom: 15px;
+    }
+
+    /* Zone options course */
+    #raceOptions {
+      background: var(--ffslc-grey-light);
+      border: 2px solid var(--ffslc-blue);
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      text-align: center;
+      font-size: 18px;
+    }
+    #raceOptions input, #raceOptions select {
+      font-size: 18px;
+      padding: 4px 8px;
+      margin: 5px;
+    }
+
+    #log, #arrivals, #results { margin-top: 20px; }
+
+    /* Boutons principaux */
+    .big-btn {
+      background: var(--ffslc-red);
+      color: var(--ffslc-white);
+      border: none;
+      border-radius: 6px;
+      padding: 12px 25px;
+      font-size: 22px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    .big-btn:hover {
+      background: #C00016;
+    }
+
+    /* Boutons secondaires */
+    button {
+      background: var(--ffslc-blue);
+      color: var(--ffslc-white);
+      border: none;
+      border-radius: 5px;
+      padding: 8px 15px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #002A50;
+    }
+
+    /* Inputs */
+    input, select {
+      border: 2px solid var(--ffslc-blue);
+      border-radius: 5px;
+      padding: 6px 10px;
+      font-size: 18px;
+    }
+    .bib-input { font-size: 20px; width: 120px; }
+
+    .toolbar { margin-top: 10px; margin-bottom: 10px; }
+
+    /* Tableau */
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 10px;
+      border: 2px solid var(--ffslc-blue);
+    }
+    th {
+      background: var(--ffslc-blue);
+      color: var(--ffslc-white);
+      font-size: 16px;
+      padding: 6px;
+    }
+    td {
+      background: var(--ffslc-grey-light);
+      font-size: 15px;
+      padding: 6px;
+    }
+
+    /* Arrivées en attente */
+    #arrivalTableBody tr td {
+      background: var(--ffslc-grey-mid);
+      font-weight: bold;
+    }
+
+    /* Statuts colorés */
+    .status-penalite {
+      background: #FFF3CD !important;
+      color: #856404 !important;
+    }
+    .status-abandon {
+      background: #D6D8DB !important;
+      color: #495057 !important;
+    }
+    .status-dsq {
+      background: #F8D7DA !important;
+      color: #721C24 !important;
+    }
+  </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
+</head>
+
+<body>
+
+<div id="disciplineBanner"></div>
+
+<div id="raceOptions">
+  <div>
+    Distance (km) :
+    <input type="number" id="distanceInput" step="0.1" style="width:80px">
+
+    &nbsp;&nbsp;&nbsp;
+
+    Chien d'Or :
+    <select id="chienDorInput">
+      <option value="non">Non</option>
+      <option value="oui">Oui</option>
+    </select>
+  </div>
+
+  <div>
+    Lieu :
+    <input type="text" id="lieuInput" placeholder="Ex : Cabasse">
+
+    &nbsp;&nbsp;&nbsp;
+
+    Date :
+    <input type="text" id="dateInput" placeholder="22/04/2026">
+  </div>
+</div>
+
+<h1>Chrono par dossard - créer par Robert AURAY version 3.02 COPYRIGHT</h1>
+
+<h2>1. Charger le fichier CSV</h2>
+<input type="file" id="csvFile" accept=".csv">
+<button id="loadCsvBtn">Importer</button>
+
+<div id="log"></div>
+
+<h2>2. Arrivées</h2>
+<button class="big-btn" id="btnArrival">Nouvelle arrivée</button>
+<input type="number" id="bibInput" class="bib-input" placeholder="Dossard">
+<button id="assignBibBtn">Attribuer dossard</button>
+
+<div id="arrivals">
+  <h3>Arrivées en attente</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Temps arrivée</th>
+        <th>Dossard</th>
+      </tr>
+    </thead>
+    <tbody id="arrivalTableBody"></tbody>
+  </table>
+</div>
+
+<h3>Statut concurrent</h3>
+Dossard :
+<input type="number" id="statusBib" style="width:80px">
+
+Statut :
+<select id="statusSelect">
+  <option value="ok">OK</option>
+  <option value="penalite">Pénalité</option>
+  <option value="abandon">Abandon</option>
+  <option value="dsq">Disqualification</option>
+</select>
+
+Pénalité (sec) :
+<input type="number" id="penaliteInput" style="width:80px">
+
+<button id="applyStatusBtn">Appliquer</button>
+
+<div id="results">
+  <h3>Résultats</h3>
+
+  <div class="toolbar">
+    Catégorie :
+    <select id="categoryFilter">
+      <option value="">Toutes</option>
+    </select>
+    <button id="exportExcelBtn">Export Excel (général)</button>
+    <button id="exportPdfGeneralBtn">Export PDF (général)</button>
+    <button id="exportPdfCatBtn">Export PDF (catégories séparées)</button>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Place</th>
+        <th>Dossard</th>
+        <th>Nom</th>
+        <th>Prénom</th>
+        <th>Discipline</th>
+        <th>Catégorie</th>
+        <th>Temps</th>
+        <th>Écart</th>
+        <th>Pénalité</th>
+        <th>Statut</th>
+      </tr>
+    </thead>
+    <tbody id="resultsTableBody"></tbody>
+  </table>
+</div>
+
+<script>
+  /* ============================
+     VARIABLES GLOBALES
+  ============================ */
+  let athletes = [];
+  let byBib = {};
+  let arrivalQueue = [];
+  let categories = new Set();
+
+  let raceDistance = null;
+  let chienDor = "non";
+  let raceLieu = "";
+  let raceDate = "";
+
+  const logDiv = document.getElementById('log');
+  const arrivalTableBody = document.getElementById('arrivalTableBody');
+  const resultsTableBody = document.getElementById('resultsTableBody');
+  const categoryFilter = document.getElementById('categoryFilter');
+
+  document.getElementById('distanceInput').addEventListener('change', e => raceDistance = parseFloat(e.target.value));
+  document.getElementById('chienDorInput').addEventListener('change', e => chienDor = e.target.value);
+  document.getElementById('lieuInput').addEventListener('change', e => raceLieu = e.target.value);
+  document.getElementById('dateInput').addEventListener('change', e => raceDate = e.target.value);
+
+  /* ============================
+     UTILITAIRES
+  ============================ */
+  function log(msg) {
+    logDiv.innerHTML += `<div>${msg}</div>`;
+  }
+
+  function formatTime(ms) {
+    if (ms == null) return "";
+    const h = Math.floor(ms / 3600000);
+    const m = Math.floor((ms % 3600000) / 60000);
+    const s = Math.floor((ms % 60000) / 1000);
+    const mm = ms % 1000;
+    return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${String(mm).padStart(3,'0')}`;
+  }
+
+  function formatAbsoluteTime(ms) {
+    const d = new Date(ms);
+    return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}.${String(d.getMilliseconds()).padStart(3,'0')}`;
+  }
+
+  function parseCsv(text) {
+    const lines = text.split(/\r?\n/).filter(l => l.trim() !== '');
+    if (lines.length < 2) return [];
+    const header = lines[0].split(',').map(h => h.trim());
+    const rows = [];
+    for (let i = 1; i < lines.length; i++) {
+      const cols = lines[i].split(',');
+      if (cols.length !== header.length) continue;
+      const obj = {};
+      for (let j = 0; j < header.length; j++) {
+        obj[header[j]] = cols[j].trim().replace(/^"|"$/g, '');
+      }
+      rows.push(obj);
+    }
+    return rows;
+  }
+
+  function parseHeureDepartToMs(str) {
+    if (!str) return null;
+    const parts = str.split(':');
+    const h = parseInt(parts[0], 10) || 0;
+    const m = parseInt(parts[1], 10) || 0;
+    const s = parts.length > 2 ? parseInt(parts[2], 10) || 0 : 0;
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, s, 0).getTime();
+  }
+
+  /* ============================
+     IMPORT CSV
+  ============================ */
+  function buildInternalStructures(rows) {
+    athletes = [];
+    byBib = {};
+    categories = new Set();
+
+    rows.forEach(r => {
+      const bib = parseInt(r['dossard'], 10);
+      if (isNaN(bib)) return;
+
+      const athlete = {
+        licence: r['licence'] || null,
+        nom: r['nom'] || '',
+        prenom: r['prenom'] || '',
+        categorie: r['categorie'] || '',
+        club: r['club'] || '',
+        chien: {
+          nom: r['nom_du_chien'] || '',
+          race: r['race'] || '',
+          puce: r['puce'] || ''
+        },
+        dossard: bib,
+        discipline: r['discipline'] || '',
+        moyenne: r['moyenne'] ? parseFloat(r['moyenne']) : null,
+        courses: r['courses'] ? parseInt(r['courses'], 10) : null,
+        participants: r['participants'] ? parseInt(r['participants'], 10) : null,
+        start_time: parseHeureDepartToMs(r['heure_depart']),
+        finish_time: null,
+        final_time: null,
+        status: "ok",
+        penalite: 0
+      };
+
+      athletes.push(athlete);
+      byBib[bib] = athlete;
+      if (athlete.categorie) categories.add(athlete.categorie);
+    });
+
+    buildCategoryFilter();
+    log(`Import terminé : ${athletes.length} concurrents chargés.`);
+  }
+
+  function buildCategoryFilter() {
+    categoryFilter.innerHTML = '<option value="">Toutes</option>';
+    Array.from(categories).sort().forEach(cat => {
+      const opt = document.createElement('option');
+      opt.value = cat;
+      opt.textContent = cat;
+      categoryFilter.appendChild(opt);
+    });
+  }
+
+  function updateDisciplineBanner() {
+    if (athletes.length === 0) return;
+    let d = athletes[0].discipline || "";
+    d = d.replace(/Ã©/g,"é").replace(/Ã¨/g,"è").replace(/Ãª/g,"ê").replace(/Ã´/g,"ô").replace(/Ã€/g,"à");
+    document.getElementById('disciplineBanner').textContent = d.toUpperCase();
+  }
+
+  /* ============================
+     AFFICHAGE ARRIVÉES
+  ============================ */
+  function renderArrivalQueue() {
+    arrivalTableBody.innerHTML = '';
+    arrivalQueue.forEach((a, idx) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${idx + 1}</td>
+        <td>${formatAbsoluteTime(a.time)}</td>
+        <td>${a.bib !== null ? a.bib : ''}</td>
+      `;
+      arrivalTableBody.appendChild(tr);
+    });
+  }
+
+  /* ============================
+     AFFICHAGE RÉSULTATS
+  ============================ */
+  function renderResults() {
+    const filterCat = categoryFilter.value;
+    resultsTableBody.innerHTML = '';
+
+    const filtered = athletes.filter(a =>
+      (!filterCat || a.categorie === filterCat)
+    );
+
+    const finishers = filtered
+      .filter(a => a.status !== 'abandon' && a.status !== 'dsq' && a.final_time !== null)
+      .sort((a, b) => a.final_time - b.final_time);
+
+    const abandons = filtered.filter(a => a.status === 'abandon');
+    const dsq = filtered.filter(a => a.status === 'dsq');
+
+    const ordered = [...finishers, ...abandons, ...dsq];
+    if (ordered.length === 0) return;
+
+    const firstTime = finishers.length ? finishers[0].final_time : null;
+    let place = 1;
+
+    ordered.forEach(a => {
+      const timeDisplay =
+        a.status === 'dsq' ? 'DSQ' :
+        a.status === 'abandon' ? 'ABANDON' :
+        formatTime(a.final_time);
+
+      let ecartDisplay = '-';
+      if (firstTime !== null && a.status !== 'abandon' && a.status !== 'dsq') {
+        const diff = a.final_time - firstTime;
+        ecartDisplay = diff === 0 ? '-' : '+' + formatTime(diff);
+      }
+
+      const penaltyDisplay =
+        a.status === 'penalite' && a.penalite > 0 ? formatTime(a.penalite) : '-';
+
+      let statutLabel = 'OK';
+      if (a.status === 'penalite') statutLabel = 'PÉNALITÉ';
+      if (a.status === 'abandon') statutLabel = 'ABANDON';
+      if (a.status === 'dsq') statutLabel = 'DSQ';
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${(a.status !== 'abandon' && a.status !== 'dsq') ? place : ''}</td>
+        <td>${a.dossard}</td>
+        <td>${a.nom}</td>
+        <td>${a.prenom}</td>
+        <td>${a.discipline}</td>
+        <td>${a.categorie}</td>
+        <td>${timeDisplay}</td>
+        <td>${ecartDisplay}</td>
+        <td>${penaltyDisplay}</td>
+        <td>${statutLabel}</td>
+      `;
+
+      if (a.status === 'penalite') tr.classList.add('status-penalite');
+      if (a.status === 'abandon') tr.classList.add('status-abandon');
+      if (a.status === 'dsq') tr.classList.add('status-dsq');
+
+      resultsTableBody.appendChild(tr);
+
+      if (a.status !== 'abandon' && a.status !== 'dsq') place++;
+    });
+  }
+
+  /* ============================
+     STATUT CONCURRENT
+  ============================ */
+  document.getElementById('applyStatusBtn').addEventListener('click', () => {
+    const bib = parseInt(document.getElementById('statusBib').value, 10);
+    const status = document.getElementById('statusSelect').value;
+    const penaliteSec = parseFloat(document.getElementById('penaliteInput').value) || 0;
+
+    const athlete = byBib[bib];
+    if (!athlete) {
+      log(`Dossard ${bib} introuvable`);
+      return;
+    }
+
+    athlete.status = status;
+
+    if (status === 'penalite') {
+      athlete.penalite = penaliteSec * 1000;
+      if (athlete.finish_time !== null && athlete.start_time !== null) {
+        athlete.final_time = (athlete.finish_time - athlete.start_time) + athlete.penalite;
+      }
+    } else if (status === 'ok') {
+      athlete.penalite = 0;
+      if (athlete.finish_time !== null && athlete.start_time !== null) {
+        athlete.final_time = (athlete.finish_time - athlete.start_time);
+      }
+    } else if (status === 'abandon') {
+      athlete.penalite = 0;
+      athlete.final_time = null;
+    } else if (status === 'dsq') {
+      athlete.penalite = 0;
+      athlete.final_time = 0;
+    }
+
+    renderResults();
+  });
+
+  /* ============================
+     ARRIVÉE
+  ============================ */
+  document.getElementById('btnArrival').addEventListener('click', () => {
+    const now = Date.now();
+    arrivalQueue.push({ time: now, bib: null });
+    renderArrivalQueue();
+    log(`Arrivée enregistrée à ${now} ms`);
+  });
+
+  /* ============================
+     ATTRIBUTION DOSSARD
+  ============================ */
+  document.getElementById('assignBibBtn').addEventListener('click', () => {
+    const bibInputField = document.getElementById('bibInput');
+    const bib = parseInt(bibInputField.value, 10);
+
+    if (isNaN(bib)) {
+      alert('Dossard invalide');
+      return;
+    }
+
+    const idx = arrivalQueue.findIndex(a => a.bib === null);
+    if (idx === -1) {
+      alert('Aucune arrivée en attente');
+      return;
+    }
+
+    const arrival = arrivalQueue[idx];
+    const athlete = byBib[bib];
+
+    if (!athlete) {
+      log(`Dossard ${bib} inconnu — saisie annulée`);
+      arrival.bib = null;
+      bibInputField.value = '';
+      renderArrivalQueue();
+      return;
+    }
+
+    if (athlete.final_time !== null && athlete.status !== 'abandon' && athlete.status !== 'dsq') {
+      log(`Dossard ${bib} déjà utilisé — saisie annulée`);
+      arrival.bib = null;
+      bibInputField.value = '';
+      renderArrivalQueue();
+      return;
+    }
+
+    arrival.bib = bib;
+
+    if (!athlete.start_time && athlete.start_time !== 0) {
+      log(`Pas d'heure de départ pour le dossard ${bib}`);
+    } else {
+      athlete.finish_time = arrival.time;
+      let base = athlete.finish_time - athlete.start_time;
+      if (athlete.status === 'penalite') {
+        base += athlete.penalite;
+      }
+      athlete.final_time = base;
+      log(`Temps calculé pour dossard ${bib} : ${formatTime(athlete.final_time)}`);
+    }
+
+    bibInputField.value = '';
+    renderArrivalQueue();
+    renderResults();
+  });
+
+  categoryFilter.addEventListener('change', renderResults);
+
+  document.getElementById('loadCsvBtn').addEventListener('click', () => {
+    const file = document.getElementById('csvFile').files[0];
+    if (!file) {
+      alert('Choisis un fichier CSV');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = e => {
+      const rows = parseCsv(e.target.result);
+      buildInternalStructures(rows);
+      renderResults();
+      updateDisciplineBanner();
+    };
+    reader.readAsText(file, 'ISO-8859-1');
+  });
+  /* ============================
+     EXPORT EXCEL GÉNÉRAL
+  ============================ */
+  document.getElementById('exportExcelBtn').addEventListener('click', () => {
+    const data = athletes
+      .filter(a => a.final_time !== null || a.status === 'abandon' || a.status === 'dsq')
+      .map(a => ({
+        Licence: a.licence,
+        Nom: a.nom,
+        Prénom: a.prenom,
+        Catégorie: a.categorie,
+        Club: a.club,
+        Nom_du_chien: a.chien.nom,
+        Race: a.chien.race,
+        Puce: a.chien.puce,
+        Dossard: a.dossard,
+        Discipline: a.discipline,
+        Distance_km: raceDistance,
+        Chien_d_or: chienDor,
+        Lieu: raceLieu,
+        Date: raceDate,
+        Statut: a.status,
+        Penalite_ms: a.penalite,
+        Heure_depart: a.start_time,
+        Temps_final: a.status === 'dsq'
+          ? 0
+          : (a.status === 'abandon' ? null : formatTime(a.final_time))
+      }));
+
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Général');
+    XLSX.writeFile(wb, 'classement_general_complet.xlsx');
+  });
+
+  /* ============================
+     EXPORT PDF GÉNÉRAL (PAYSAGE)
+  ============================ */
+  document.getElementById('exportPdfGeneralBtn').addEventListener('click', () => {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: "landscape" });
+
+    doc.text('Classement général', 14, 15);
+    doc.text(`Distance : ${raceDistance || "-"} km`, 14, 22);
+    doc.text(`Chien d'Or : ${chienDor}`, 14, 29);
+    doc.text(`Lieu : ${raceLieu || "-"}`, 14, 36);
+    doc.text(`Date : ${raceDate || "-"}`, 14, 43);
+
+    const filtered = athletes.filter(a =>
+      a.final_time !== null || a.status === 'abandon' || a.status === 'dsq'
+    );
+
+    const finishers = filtered
+      .filter(a => a.status !== 'abandon' && a.status !== 'dsq')
+      .sort((a, b) => a.final_time - b.final_time);
+
+    const abandons = filtered.filter(a => a.status === 'abandon');
+    const dsq = filtered.filter(a => a.status === 'dsq');
+
+    const ordered = [...finishers, ...abandons, ...dsq];
+
+    let place = 1;
+
+    const rows = ordered.map(a => {
+      const timeDisplay =
+        a.status === 'dsq' ? 'DSQ' :
+        a.status === 'abandon' ? 'ABANDON' :
+        formatTime(a.final_time);
+
+      const penaltyDisplay =
+        a.status === 'penalite' && a.penalite > 0 ? formatTime(a.penalite) : '-';
+
+      const row = [
+        (a.status !== 'abandon' && a.status !== 'dsq') ? place : '',
+        a.licence || '',
+        a.dossard,
+        a.nom,
+        a.prenom,
+        a.categorie,
+        a.club,
+        a.chien.nom,
+        timeDisplay,
+        penaltyDisplay,
+        a.status
+      ];
+
+      if (a.status !== 'abandon' && a.status !== 'dsq') place++;
+
+      return row;
+    });
+
+    doc.autoTable({
+      head: [['Place', 'Licence', 'Dossard', 'Nom', 'Prénom', 'Catégorie', 'Club', 'Chien', 'Temps', 'Pénalité', 'Statut']],
+      body: rows,
+      startY: 50
+    });
+
+    doc.save('classement_general.pdf');
+  });
+
+  /* ============================
+     EXPORT PDF PAR CATÉGORIES (PAYSAGE)
+  ============================ */
+  document.getElementById('exportPdfCatBtn').addEventListener('click', () => {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: "landscape" });
+
+    const categoriesList = Array.from(categories).sort();
+    let y = 15;
+
+    doc.text('Classement par catégories', 14, y);
+    y += 7;
+    doc.text(`Distance : ${raceDistance || "-"} km`, 14, y); y += 7;
+    doc.text(`Chien d'Or : ${chienDor}`, 14, y); y += 7;
+    doc.text(`Lieu : ${raceLieu || "-"}`, 14, y); y += 7;
+    doc.text(`Date : ${raceDate || "-"}`, 14, y); y += 10;
+
+    categoriesList.forEach(cat => {
+      const filtered = athletes
+        .filter(a => a.categorie === cat)
+        .filter(a => a.final_time !== null || a.status === 'abandon' || a.status === 'dsq');
+
+      const finishers = filtered
+        .filter(a => a.status !== 'abandon' && a.status !== 'dsq')
+        .sort((a, b) => a.final_time - b.final_time);
+
+      const abandons = filtered.filter(a => a.status === 'abandon');
+      const dsq = filtered.filter(a => a.status === 'dsq');
+
+      const ordered = [...finishers, ...abandons, ...dsq];
+      if (ordered.length === 0) return;
+
+      doc.text(`Catégorie : ${cat}`, 14, y);
+      y += 7;
+
+      let place = 1;
+
+      const rows = ordered.map(a => {
+        const timeDisplay =
+          a.status === 'dsq' ? 'DSQ' :
+          a.status === 'abandon' ? 'ABANDON' :
+          formatTime(a.final_time);
+
+        const penaltyDisplay =
+          a.status === 'penalite' && a.penalite > 0 ? formatTime(a.penalite) : '-';
+
+        const row = [
+          (a.status !== 'abandon' && a.status !== 'dsq') ? place : '',
+          a.licence || '',
+          a.dossard,
+          a.nom,
+          a.prenom,
+          a.club,
+          a.chien.nom,
+          timeDisplay,
+          penaltyDisplay,
+          a.status
+        ];
+
+        if (a.status !== 'abandon' && a.status !== 'dsq') place++;
+
+        return row;
+      });
+
+      doc.autoTable({
+        head: [['Place', 'Licence', 'Dossard', 'Nom', 'Prénom', 'Club', 'Chien', 'Temps', 'Pénalité', 'Statut']],
+        body: rows,
+        startY: y
+      });
+
+      y = doc.lastAutoTable.finalY + 10;
+    });
+
+    doc.save('classement_par_categories.pdf');
+  });
+</script>
+
+</body>
+</html>
